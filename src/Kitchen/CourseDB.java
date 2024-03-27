@@ -1,7 +1,6 @@
 package Kitchen;
 
 import java.util.List;
-
 public class CourseDB {
     private List<Course> courseList;
 
