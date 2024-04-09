@@ -155,9 +155,9 @@ public class DishConstructionUI extends JFrame {
     }
 
     private void retrieveDataAndPopulateLists() {
-        String url = "jdbc:mysql://localhost:3306/yourdatabase";
-        String user = "yourusername";
-        String password = "yourpassword";
+        String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
+        String user = "in2033t29_d";
+        String password = "m8mHWvcTuXA";
 
         Connection conn = null;
         Statement stmt = null;
