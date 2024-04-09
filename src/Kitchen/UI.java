@@ -322,8 +322,6 @@ public class UI {
             System.out.println("==================================");
         }
     }
-
-
     public static void main(String[] args) throws IOException {
         new UI(args);
     }
