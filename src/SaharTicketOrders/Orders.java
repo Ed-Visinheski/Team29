@@ -133,5 +133,54 @@ public class Orders {
                 }catch(SQLException e5){e5.printStackTrace();}
             }
         });
+        butUpdate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String ordN ,status , avail , tabN;
+                ordN= txtOrderNumber.getText();
+                tabN = txtTableNumber.getText();
+                status = txtStatus.getText();
+                avail = txtDishNumber.getText();
+                try{
+                    pst = con.prepareStatement("update OrderClass set orderID = ?,dishID = ? , tableNumber = ?, orderStatus = ? ");
+                    pst.setString(1,ordN );
+                    pst.setString(2,avail );
+                    pst.setString(3,tabN);
+                    pst.setString(4,status );
+                    pst.executeUpdate();
+                    JOptionPane.showMessageDialog(null, "Order Updated");
+                    table_load();
+                    txtOrderNumber.setText("");
+                    txtDishNumber.setText("");
+                    txtTableNumber.setText("");
+                    txtStatus.setText("");
+
+                }catch(SQLException e8){e8.printStackTrace();}
+            }
+        });
+        butDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String id;
+                id = txtId.getText();
+                try{
+                    pst = con.prepareStatement("delete from OrderClass where orderID = ?");
+                    pst.setString(1,id);
+                    pst.executeUpdate();
+                    JOptionPane.showMessageDialog(null, "order deleted");
+                    table_load();
+                    txtOrderNumber.setText("");
+                    txtDishNumber.setText("");
+                    txtTableNumber.setText("");
+                    txtStatus.setText("");
+
+                }
+
+                catch (SQLException e9){
+                    e9.printStackTrace();
+                }
+
+            }
+        });
     }
 }
