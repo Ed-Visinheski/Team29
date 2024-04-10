@@ -59,13 +59,13 @@ public class LogInUI extends JFrame implements ActionListener {
                 UserAuthentication userAuthentication = new UserAuthentication();
                 boolean isAuthenticated = userAuthentication.checkUserCredentials(userName, password);
                 if(isAuthenticated) {
-
+                    int chefID = userAuthentication.getChefID();
                     // Dispose the current window
                     this.dispose();
                     // Open the FileRetrievalUI
                     EventQueue.invokeLater(() -> {
                         try {
-                            DishConstructionUI frame = new DishConstructionUI();
+                            DishConstructionUI frame = new DishConstructionUI(chefID);
                             frame.setVisible(true);
                         } catch (Exception ex) {
                             ex.printStackTrace();

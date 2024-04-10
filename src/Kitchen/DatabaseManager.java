@@ -13,8 +13,8 @@ public class DatabaseManager {
         if (connection == null) {
             try {
                 String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
-                String user = "in2033t29_d";
-                String password = "m8mHWvcTuXA";
+                String user = "in2033t29_a";
+                String password = "NvG2lCOEy_g";
                 connection = DriverManager.getConnection(url, user, password);
                 System.out.println("Database connection successfully established.");
             } catch (Exception e) {

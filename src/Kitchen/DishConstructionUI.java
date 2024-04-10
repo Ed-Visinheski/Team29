@@ -2,12 +2,15 @@ package Kitchen;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DishConstructionUI extends JFrame {
     private JPanel draftsPanel;
     private ArrayList<JButton> draftButtons;
+    private HashMap<String, String> fileMap;
     private JTextArea textArea;
     private DefaultListModel<String> draftsModel;
     private DefaultListModel<String> submittedModel;
@@ -15,16 +18,21 @@ public class DishConstructionUI extends JFrame {
     private JList<String> draftsList;
     private JScrollPane draftsScrollPane;
 
-    public DishConstructionUI() {
+    private int chefID;
+
+    public DishConstructionUI(int chefID) {
         setTitle("File Manager");
+        this.chefID = chefID;
         setSize(1280, 720);
         setMinimumSize(new Dimension(1280, 720)); // Set minimum size
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
         //getContentPane().setBackground(new Color(255, 182, 193)); // Light pink background
+        fileMap = new HashMap<>();
         draftsModel = new DefaultListModel<>();
         submittedModel = new DefaultListModel<>();
         recipesModel = new DefaultListModel<>();
+        retrieveDataAndPopulateLists();
         // Create the menu header with file name and buttons
         createMenuHeader();
         // Create the file directory with DRAFTS, SUBMITTED, and RECIPES sections
@@ -35,6 +43,7 @@ public class DishConstructionUI extends JFrame {
 
         setVisible(true);
     }
+
 
     private void createMenuHeader() {
         JPanel headerPanel = new JPanel();
@@ -51,6 +60,16 @@ public class DishConstructionUI extends JFrame {
         headerPanel.add(submitButton);
         headerPanel.add(deleteButton);
         submitButton.addActionListener(e -> submitDraft());
+
+        saveButton.addActionListener(e -> {
+            String selectedRecipe = draftsList.getSelectedValue();
+            if (selectedRecipe != null) {
+                updateRecipeContent(selectedRecipe, textArea.getText());
+            } else {
+                JOptionPane.showMessageDialog(this, "No recipe selected for update.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
         add(headerPanel, BorderLayout.NORTH);
     }
 
@@ -81,6 +100,17 @@ public class DishConstructionUI extends JFrame {
 
         if ("DRAFTS".equals(title)) {
             draftsList = fileList; // Assign the draftsList reference
+            draftsList.addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting()) {
+                    String selectedDishName = draftsList.getSelectedValue();
+                    if (selectedDishName != null && fileMap.containsKey(selectedDishName)) {
+                        String content = fileMap.get(selectedDishName);
+                        textArea.setText(content); // Set the text area content to the selected file's content
+                    } else {
+                        textArea.setText(""); // Clear the text area if no content found
+                    }
+                }
+            });
         }
 
         if (hasAddRemoveButtons) {
@@ -103,6 +133,7 @@ public class DishConstructionUI extends JFrame {
             buttonPanel.add(addButton);
             buttonPanel.add(removeButton);
             sectionPanel.add(buttonPanel, BorderLayout.SOUTH);
+
         }
 
         return sectionPanel;
@@ -120,24 +151,6 @@ public class DishConstructionUI extends JFrame {
     }
 
 
-    private void addDraft(ActionEvent e) {
-        JButton newButton = new JButton("New Draft " + (draftButtons.size() + 1));
-        styleButton(newButton, new Color(255, 105, 180)); // Darker pink
-        draftButtons.add(newButton);
-        draftsPanel.add(newButton);
-        draftsPanel.revalidate();
-        draftsPanel.repaint();
-    }
-
-    private void removeDraft(ActionEvent e) {
-        if (draftButtons.size() > 0) {
-            JButton buttonToRemove = draftButtons.remove(draftButtons.size() - 1);
-            draftsPanel.remove(buttonToRemove);
-            draftsPanel.revalidate();
-            draftsPanel.repaint();
-        }
-    }
-
     private void createTextArea() {
         textArea = new JTextArea();
         textArea.setBackground(Color.WHITE);
@@ -145,6 +158,7 @@ public class DishConstructionUI extends JFrame {
         JScrollPane textAreaScrollPane = new JScrollPane(textArea);
         textAreaScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(textAreaScrollPane, BorderLayout.CENTER);
+        // Display the content of the first recipe (for testing
     }
 
     private void styleButton(JButton button, Color color) {
@@ -155,50 +169,59 @@ public class DishConstructionUI extends JFrame {
     }
 
     private void retrieveDataAndPopulateLists() {
-        String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
-        String user = "in2033t29_d";
-        String password = "m8mHWvcTuXA";
-
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-
         try {
-            conn = DriverManager.getConnection(url, user, password);
+            System.out.println("Retrieving data for chefID: " + chefID);
+            Connection connection = DatabaseManager.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Recipe WHERE chefID = " + chefID+ " AND recipeStatus IN ('DRAFT', 'SUBMITTED', 'RECIPE')");
+            while (resultSet.next()) {
+                String dishName = resultSet.getString("recipeName");
+                String status = resultSet.getString("recipeStatus");
+                Blob recipeFile = resultSet.getBlob("recipeFile");
+                String recipeContent;
+                if(recipeFile == null) {
+                    recipeContent = "";
+                }
+                else{
+                    recipeContent = new String(recipeFile.getBytes(1, (int) recipeFile.length()), StandardCharsets.UTF_8);
+                }
+                if ("DRAFT".equals(status)) {
+                    System.out.println("Adding draft: " + dishName);
+                    draftsModel.addElement(dishName);
+                } else if ("SUBMITTED".equals(status)) {
+                    System.out.println("Adding submitted: " + dishName);
+                    submittedModel.addElement(dishName);
 
-            // Drafts
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT name FROM drafts WHERE user_id = YOUR_USER_ID");
-            while (rs.next()) {
-                draftsModel.addElement(rs.getString("name"));
-            }
-
-            // Submitted
-            rs = stmt.executeQuery("SELECT name FROM submitted WHERE user_id = YOUR_USER_ID");
-            while (rs.next()) {
-                submittedModel.addElement(rs.getString("name"));
-            }
-
-            // Recipes
-            rs = stmt.executeQuery("SELECT name FROM recipes WHERE user_id = YOUR_USER_ID");
-            while (rs.next()) {
-                recipesModel.addElement(rs.getString("name"));
+                } else if ("RECIPE".equals(status)) {
+                    System.out.println("Adding recipe: " + dishName);
+                    recipesModel.addElement(dishName);
+                }
+                fileMap.put(dishName, recipeContent);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle exceptions appropriately
-        } finally {
-            // Clean up resources
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(DishConstructionUI::new);
+    private void updateRecipeContent(String recipeName, String newContent) {
+        try{
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement pstmt = connection.prepareStatement("UPDATE Recipe SET recipeFile = ? WHERE recipeName = ? AND chefID = ?");
+
+            pstmt.setBytes(1, newContent.getBytes(StandardCharsets.UTF_8));
+            pstmt.setString(2, recipeName);
+            pstmt.setInt(3, this.chefID);
+
+            int updatedRows = pstmt.executeUpdate();
+            if (updatedRows > 0) {
+                JOptionPane.showMessageDialog(this, "Recipe updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to update the recipe. Make sure the recipe exists.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error updating the recipe.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
+
 }

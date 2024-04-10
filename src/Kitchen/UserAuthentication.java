@@ -5,8 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class UserAuthentication {
+    private String username;
 
     public boolean checkUserCredentials(String inputUsername, String inputPassword) {
+        this.username = inputUsername;
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -47,5 +49,25 @@ public class UserAuthentication {
             }
         }
         return false;
+    }
+    public int getChefID() {
+        int chefID = -1;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DatabaseManager.getConnection();
+            String sql = "SELECT chefID FROM ChefAccount WHERE accountUsername = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, username);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                chefID = rs.getInt("chefID");
+            }
+            return chefID;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return chefID;
     }
 }
