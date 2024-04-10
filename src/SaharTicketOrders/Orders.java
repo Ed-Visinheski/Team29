@@ -18,15 +18,19 @@ public class Orders {
     private JButton butUpdate;
     private JButton butDelete;
     private JButton butSearch;
-    private JTextField txtOrderSearch;
+    private JTextField txtId;
     private JLabel jdOrderNumber;
     private JLabel jsStatus;
     private JLabel jsDishNumber;
     private JTextField txtStatus;
     private JTextField txtDishNumber;
+    private JLabel jsTableNumber;
+    private JTextField txtTableNumber;
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
+    Connection con;
+    PreparedStatement pst;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Orders");
@@ -35,13 +39,12 @@ public class Orders {
         frame.pack();
         frame.setVisible(true);
     }
-    Connection con;
-    PreparedStatement pst;
+
     public void connect()
     {
         String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
-        String user = "in2033t29_d";
-        String password = "m8mHWvcTuXA";
+        String user = "in2033t29_a";
+        String password = "NvG2lCOEy_g";
 
         try {
             //Class.forName("com.mysql.jdbc.Driver");
@@ -96,6 +99,35 @@ public class Orders {
                 }
                 catch (SQLException e1){e1.printStackTrace();}
 
+            }
+        });
+        butSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    String empid = txtId.getText();
+                    pst = con.prepareStatement("select orderID,dishID,tableNumber, orderStatus from OrderClass where orderID = ?");
+                    pst.setString(1,empid);
+                    ResultSet rs = pst.executeQuery();
+                    if(rs.next() == true){
+                        String nameO = rs.getString(1);
+                        String nameD = rs.getString(2);
+                        String nameT = rs.getString(3);
+                        String nameS = rs.getString(4);
+                        txtOrderNumber.setText(nameO);
+                        txtDishNumber.setText(nameD);
+                        txtTableNumber.setText(nameT);
+                        txtStatus.setText(nameS);
+                    }
+                    else {
+                        txtOrderNumber.setText("");
+                        txtDishNumber.setText("");
+                        txtTableNumber.setText("");
+                        txtStatus.setText("");
+                        JOptionPane.showMessageDialog(null, "Invalid OrderNumber");
+
+                    }
+                }catch(SQLException e5){e5.printStackTrace();}
             }
         });
     }
