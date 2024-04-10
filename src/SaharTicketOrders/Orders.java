@@ -80,21 +80,24 @@ public class Orders {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                String ordN , dishid,status , avail;
+                String ordN ,status , avail , tabN;
                 ordN= txtOrderNumber.getText();
+                tabN = txtTableNumber.getText();
                 status = txtStatus.getText();
                 avail = txtDishNumber.getText();
                 try{
-                    pst = con.prepareStatement("insert into OrderClass(orderID,dishId,orderStatus)values (?,?,?)");
+                    pst = con.prepareStatement("insert into OrderClass(orderID,dishId,tableNumber,orderStatus)values (?,?,?,?)");
                     pst.setString(1,ordN);
                     pst.setString(2,avail);
-                    pst.setString(3,status);
+                    pst.setString(3,tabN);
+                    pst.setString(4,status);
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "record added!");
                     //table_load();
                     txtOrderNumber.setText("");
-                    txtStatus.setText("");
                     txtDishNumber.setText("");
+                    txtTableNumber.setText("");
+                    txtStatus.setText("");
                     txtOrderNumber.requestFocus();
                 }
                 catch (SQLException e1){e1.printStackTrace();}
