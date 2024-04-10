@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.*;
 
 public class LogInUI extends JFrame implements ActionListener {
 
@@ -45,6 +46,9 @@ public class LogInUI extends JFrame implements ActionListener {
         container.add(loginButton);
     }
 
+
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
@@ -52,22 +56,31 @@ public class LogInUI extends JFrame implements ActionListener {
             String password = String.valueOf(passwordField.getPassword());
             // Simple login success logic, replace with real authentication
             if (!userName.trim().isEmpty() && !password.trim().isEmpty()) {
-                // Dispose the current window
-                this.dispose();
-                // Open the FileRetrievalUI
-                EventQueue.invokeLater(() -> {
-                    try {
-                        FileSelectionUI frame = new FileSelectionUI();
-                        frame.setVisible(true);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                });
+                UserAuthentication userAuthentication = new UserAuthentication();
+                boolean isAuthenticated = userAuthentication.checkUserCredentials(userName, password);
+                if(isAuthenticated) {
+
+                    // Dispose the current window
+                    this.dispose();
+                    // Open the FileRetrievalUI
+                    EventQueue.invokeLater(() -> {
+                        try {
+                            DishConstructionUI frame = new DishConstructionUI();
+                            frame.setVisible(true);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+                } else {
+                    JOptionPane.showMessageDialog(this, "Login Failed");
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Login Failed");
             }
         }
     }
+
+
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
