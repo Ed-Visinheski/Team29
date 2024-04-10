@@ -142,11 +142,11 @@ public class Orders {
                 status = txtStatus.getText();
                 avail = txtDishNumber.getText();
                 try{
-                    pst = con.prepareStatement("update OrderClass set orderID = ?,dishID = ? , tableNumber = ?, orderStatus = ? ");
-                    pst.setString(1,ordN );
-                    pst.setString(2,avail );
-                    pst.setString(3,tabN);
-                    pst.setString(4,status );
+                    pst = con.prepareStatement("update OrderClass set dishID = ? , tableNumber = ?, orderStatus = ? where orderID = ? ");
+                    pst.setString(1,avail );
+                    pst.setString(2,tabN );
+                    pst.setString(3,status);
+                    pst.setString(4,ordN );
                     pst.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Order Updated");
                     table_load();
