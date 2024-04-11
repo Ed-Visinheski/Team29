@@ -4,13 +4,13 @@ public class StockTracking {
     private int stockTrackingID;
     private int ingredientID;
     private int currentStockLevel;
-    private int minimumRequiredStock;
+    private int stockThreshold;
 
-    public StockTracking(int stockTrackingID, int ingredientID, int currentStockLevel, int minimumRequiredStock) {
+    public StockTracking(int stockTrackingID, int ingredientID, int currentStockLevel, int stockThreshold) {
         this.stockTrackingID = stockTrackingID;
         this.ingredientID = ingredientID;
         this.currentStockLevel = currentStockLevel;
-        this.minimumRequiredStock = minimumRequiredStock;
+        this.stockThreshold = stockThreshold;
     }
 
     public void setStockTrackingID(int stockTrackingID) {
@@ -37,18 +37,18 @@ public class StockTracking {
         return currentStockLevel;
     }
 
-    public void setMinimumRequiredStock(int minimumRequiredStock) {
-        this.minimumRequiredStock = minimumRequiredStock;
+    public void setStockThreshold(int stockThreshold) {
+        this.stockThreshold = stockThreshold;
     }
 
-    public int getMinimumRequiredStock() {
-        return minimumRequiredStock;
+    public int getStockThreshold() {
+        return stockThreshold;
     }
 
     // Additional methods related to stock tracking could include:
 
-    public boolean isStockBelowThreshold() {
-        return currentStockLevel <= minimumRequiredStock;
+    public boolean isBelowThreshold() {
+        return currentStockLevel <= stockThreshold;
     }
 
     public void updateStockLevel(int newStockLevel) {
