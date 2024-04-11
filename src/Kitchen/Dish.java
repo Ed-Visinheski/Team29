@@ -33,6 +33,14 @@ public class Dish extends KitchenToManagement.Dish{
         return dishName;
     }
 
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
+    }
+
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
     public void setDishDescription(String dishDescription) {
         this.dishDescription = dishDescription;
     }
