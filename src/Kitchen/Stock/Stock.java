@@ -40,7 +40,6 @@ public class Stock {
         return stockThreshold;
     }
 
-
     public boolean isBelowThreshold() {
         return stockLevel <= stockThreshold;
     }
@@ -52,6 +51,7 @@ public class Stock {
     public Date getDeliveryArrivalDate() {
         return deliveryArrivalDate;
     }
+
     public void setDeliveryArrivalDate(Date deliveryArrivalDate) {
         this.deliveryArrivalDate = deliveryArrivalDate;
     }
