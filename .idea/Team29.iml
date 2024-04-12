@@ -21,10 +21,19 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="rs2xml" level="project" />
+    <orderEntry type="library" name="javafx-swt" level="application" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:8.0.23" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.11.4" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:5.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:2.0.0-alpha1" level="project" />
-    <orderEntry type="library" name="javafx-swt" level="application" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:22" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac-aarch64:22" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:22" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac-aarch64:22" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:22" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac-aarch64:22" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:22" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:mac-aarch64:22" level="project" />
+    <orderEntry type="library" name="lib" level="application" />
   </component>
 </module>
