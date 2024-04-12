@@ -1,5 +1,6 @@
 package Kitchen.Stock;
 
+import javax.swing.*;
 import java.util.Date;
 
 //Done by Ahmed and jiangyi
@@ -8,6 +9,8 @@ public class Stock {
     private int stockLevel;
     private int stockThreshold;
     private Date deliveryArrivalDate;
+    private JPanel stockPanel;
+    private JTable table1;
 
     public Stock(int ingredientID, int stockLevel, int stockThreshold, Date deliveryArrivalDate) {
         this.ingredientID = ingredientID;
@@ -54,5 +57,9 @@ public class Stock {
 
     public void setDeliveryArrivalDate(Date deliveryArrivalDate) {
         this.deliveryArrivalDate = deliveryArrivalDate;
+    }
+
+    private void createUIComponents() {
+
     }
 }
