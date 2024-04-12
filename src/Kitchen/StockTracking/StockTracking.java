@@ -1,4 +1,4 @@
-package Kitchen;
+package Kitchen.StockTracking;
 //Done by Ahmed
 public class StockTracking {
     private int stockTrackingID;
