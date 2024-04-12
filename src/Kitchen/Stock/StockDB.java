@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 public class StockDB {
     private Connection connection;
-
     public StockDB() {
         Connect();
     }
@@ -14,7 +13,6 @@ public class StockDB {
         String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
         String user = "in2033t29_a";
         String password = "NvG2lCOEy_g";
-
         try {
             connection = DriverManager.getConnection(url, user, password);
             System.out.println("Connection successful");
@@ -23,7 +21,6 @@ public class StockDB {
             e.printStackTrace();
         }
     }
-
     public void Disconnect() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -35,11 +32,9 @@ public class StockDB {
             e.printStackTrace();
         }
     }
-
     public Connection getConnection() {
         return connection;
     }
-
     public void main(String[] args) {
         StockDB connector = new StockDB();
         connector.Connect();

@@ -4,24 +4,16 @@ import java.util.Date;
 
 //Done by Ahmed and jiangyi
 public class Stock {
-    private int stockTrackingID;
     private int ingredientID;
-    private int currentStockLevel;
+    private int stockLevel;
     private int stockThreshold;
+    private Date deliveryArrivalDate;
 
-    public Stock(int stockTrackingID, int ingredientID, int currentStockLevel, int stockThreshold, Date delivery) {
-        this.stockTrackingID = stockTrackingID;
+    public Stock(int ingredientID, int stockLevel, int stockThreshold, Date deliveryArrivalDate) {
         this.ingredientID = ingredientID;
-        this.currentStockLevel = currentStockLevel;
+        this.stockLevel = stockLevel;
         this.stockThreshold = stockThreshold;
-    }
-
-    public void setStockTrackingID(int stockTrackingID) {
-        this.stockTrackingID = stockTrackingID;
-    }
-
-    public int getStockTrackingID() {
-        return stockTrackingID;
+        this.deliveryArrivalDate = deliveryArrivalDate;
     }
 
     public void setIngredientID(int ingredientID) {
@@ -32,12 +24,12 @@ public class Stock {
         return ingredientID;
     }
 
-    public void setCurrentStockLevel(int currentStockLevel) {
-        this.currentStockLevel = currentStockLevel;
+    public void seStockLevel(int currentStockLevel) {
+        this.stockLevel = currentStockLevel;
     }
 
-    public int getCurrentStockLevel() {
-        return currentStockLevel;
+    public int getStockLevel() {
+        return stockLevel;
     }
 
     public void setStockThreshold(int stockThreshold) {
@@ -48,15 +40,19 @@ public class Stock {
         return stockThreshold;
     }
 
-    // Additional methods related to stock tracking could include:
 
     public boolean isBelowThreshold() {
-        return currentStockLevel <= stockThreshold;
+        return stockLevel <= stockThreshold;
     }
 
-    public void updateStockLevel(int newStockLevel) {
-        this.currentStockLevel = newStockLevel;
+    public void updateStockLevel(int stockLevel) {
+        this.stockLevel = stockLevel;
     }
 
-    // ... and any other methods that you feel are necessary for stock tracking.
+    public Date getDeliveryArrivalDate() {
+        return deliveryArrivalDate;
+    }
+    public void setDeliveryArrivalDate(Date deliveryArrivalDate) {
+        this.deliveryArrivalDate = deliveryArrivalDate;
+    }
 }
