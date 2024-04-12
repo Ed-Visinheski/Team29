@@ -1,12 +1,15 @@
-package Kitchen.StockTracking;
-//Done by Ahmed
-public class StockTracking {
+package Kitchen.Stock;
+
+import java.util.Date;
+
+//Done by Ahmed and jiangyi
+public class Stock {
     private int stockTrackingID;
     private int ingredientID;
     private int currentStockLevel;
     private int stockThreshold;
 
-    public StockTracking(int stockTrackingID, int ingredientID, int currentStockLevel, int stockThreshold) {
+    public Stock(int stockTrackingID, int ingredientID, int currentStockLevel, int stockThreshold, Date delivery) {
         this.stockTrackingID = stockTrackingID;
         this.ingredientID = ingredientID;
         this.currentStockLevel = currentStockLevel;
