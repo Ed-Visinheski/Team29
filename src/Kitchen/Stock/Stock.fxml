@@ -209,22 +209,22 @@
                                 </TableColumn>
                                 <TableColumn prefWidth="150" text="Ingredient Name">
                                     <cellValueFactory>
-                                        <javafx.scene.control.cell.PropertyValueFactory property="dateWasted" />
+                                        <javafx.scene.control.cell.PropertyValueFactory property="ingredientName" />
                                     </cellValueFactory>
                                 </TableColumn>
                                 <TableColumn prefWidth="150" text="Stock Level">
                                     <cellValueFactory>
-                                        <javafx.scene.control.cell.PropertyValueFactory property="quantityWasted" />
+                                        <javafx.scene.control.cell.PropertyValueFactory property="stockLevel" />
                                     </cellValueFactory>
                                 </TableColumn>
                                 <TableColumn prefWidth="150" text="Stock Threshold">
                                     <cellValueFactory>
-                                        <javafx.scene.control.cell.PropertyValueFactory property="reason" />
+                                        <javafx.scene.control.cell.PropertyValueFactory property="stockThreshold" />
                                     </cellValueFactory>
                                 </TableColumn>
                         <TableColumn prefWidth="150" text="Delivery Arrival Date">
                            <cellValueFactory>
-                              <PropertyValueFactory property="dateWasted" />
+                              <PropertyValueFactory property="deliveryArrivalDate" />
                            </cellValueFactory>
                         </TableColumn>
                             </columns>
