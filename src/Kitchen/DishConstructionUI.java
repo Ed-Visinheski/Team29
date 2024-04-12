@@ -16,7 +16,10 @@ public class DishConstructionUI extends JFrame {
     private DefaultListModel<String> submittedModel;
     private DefaultListModel<String> recipesModel;
     private JList<String> draftsList;
+    private JList<String> submittedList;
+    private JList<String> recipesList;
     private JScrollPane draftsScrollPane;
+
 
     private int chefID;
 
@@ -64,7 +67,16 @@ public class DishConstructionUI extends JFrame {
         saveButton.addActionListener(e -> {
             String selectedRecipe = draftsList.getSelectedValue();
             if (selectedRecipe != null) {
-                updateRecipeContent(selectedRecipe, textArea.getText());
+                updateRecipeContent(selectedRecipe, textArea.getText(), false);
+            } else {
+                JOptionPane.showMessageDialog(this, "No recipe selected for update.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        submitButton.addActionListener(e -> {
+            String selectedRecipe = draftsList.getSelectedValue();
+            if (selectedRecipe != null) {
+                updateRecipeContent(selectedRecipe, textArea.getText(), true);
             } else {
                 JOptionPane.showMessageDialog(this, "No recipe selected for update.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -89,8 +101,7 @@ public class DishConstructionUI extends JFrame {
     }
 
     private JPanel createSectionPanel(String title, boolean hasAddRemoveButtons, DefaultListModel<String> model) {
-        JPanel sectionPanel = new JPanel();
-        sectionPanel.setLayout(new BorderLayout());
+        JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBorder(BorderFactory.createTitledBorder(title));
 
         JList<String> fileList = new JList<>(model);
@@ -98,28 +109,26 @@ public class DishConstructionUI extends JFrame {
         JScrollPane listScroller = new JScrollPane(fileList);
         sectionPanel.add(listScroller);
 
-        if ("DRAFTS".equals(title)) {
-            draftsList = fileList; // Assign the draftsList reference
-            draftsList.addListSelectionListener(e -> {
-                if (!e.getValueIsAdjusting()) {
-                    String selectedDishName = draftsList.getSelectedValue();
-                    if (selectedDishName != null && fileMap.containsKey(selectedDishName)) {
-                        String content = fileMap.get(selectedDishName);
-                        textArea.setText(content); // Set the text area content to the selected file's content
-                    } else {
-                        textArea.setText(""); // Clear the text area if no content found
-                    }
+        fileList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                if (draftsList != null && draftsList != fileList) draftsList.clearSelection();
+                if (submittedList != null && submittedList != fileList) submittedList.clearSelection();
+                if (recipesList != null && recipesList != fileList) recipesList.clearSelection();
+
+                String selectedFileName = fileList.getSelectedValue();
+                if (selectedFileName != null) {
+                    loadContentFromDatabase(selectedFileName); // Load and display content from the database
+                } else {
+                    textArea.setText(""); // Clear the text area if no file is selected
                 }
-            });
-        }
+            }
+        });
 
         if (hasAddRemoveButtons) {
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             JButton addButton = new JButton("+");
-            JButton removeButton = new JButton("-");
-
-            // Make the add/remove buttons smaller
             addButton.setPreferredSize(new Dimension(20, 20));
+            JButton removeButton = new JButton("-");
             removeButton.setPreferredSize(new Dimension(20, 20));
 
             addButton.addActionListener(e -> model.addElement("New Draft " + (model.getSize() + 1)));
@@ -133,11 +142,44 @@ public class DishConstructionUI extends JFrame {
             buttonPanel.add(addButton);
             buttonPanel.add(removeButton);
             sectionPanel.add(buttonPanel, BorderLayout.SOUTH);
+        }
 
+        if ("DRAFTS".equals(title)) {
+            draftsList = fileList;
+        } else if ("SUBMITTED".equals(title)) {
+            submittedList = fileList;
+        } else if ("RECIPES".equals(title)) {
+            recipesList = fileList;
         }
 
         return sectionPanel;
     }
+
+    private void loadContentFromDatabase(String recipeName) {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement("SELECT recipeFile FROM Recipe WHERE recipeName = ? AND chefID = ?")) {
+            pstmt.setString(1, recipeName);
+            pstmt.setInt(2, this.chefID);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Blob recipeBlob = rs.getBlob("recipeFile");
+                    String content = new String(recipeBlob.getBytes(1, (int) recipeBlob.length()), StandardCharsets.UTF_8);
+                    textArea.setText(content);
+                } else {
+                    textArea.setText("No content available."); // Handle case where no content is found
+                }
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Failed to load recipe content: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            textArea.setText("");
+        }
+    }
+
+
+
+
+
 
     // Call this method when the "SUBMIT" button is clicked
     private void submitDraft() {
@@ -203,14 +245,15 @@ public class DishConstructionUI extends JFrame {
         }
     }
 
-    private void updateRecipeContent(String recipeName, String newContent) {
+    private void updateRecipeContent(String recipeName, String newContent, boolean isSubmitted) {
         try{
             Connection connection = DatabaseManager.getConnection();
-            PreparedStatement pstmt = connection.prepareStatement("UPDATE Recipe SET recipeFile = ? WHERE recipeName = ? AND chefID = ?");
+            PreparedStatement pstmt = connection.prepareStatement("UPDATE Recipe SET recipeFile = ?, recipeStatus = ? WHERE recipeName = ? AND chefID = ?");
 
             pstmt.setBytes(1, newContent.getBytes(StandardCharsets.UTF_8));
-            pstmt.setString(2, recipeName);
-            pstmt.setInt(3, this.chefID);
+            pstmt.setString(2, isSubmitted ? "SUBMITTED" : "DRAFT");
+            pstmt.setString(3, recipeName);
+            pstmt.setInt(4, this.chefID);
 
             int updatedRows = pstmt.executeUpdate();
             if (updatedRows > 0) {
