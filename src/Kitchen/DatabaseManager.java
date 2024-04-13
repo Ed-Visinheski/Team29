@@ -10,23 +10,30 @@ public class DatabaseManager {
     private static HikariDataSource dataSource;
 
     static {
-        // Initialize the connection pool using HikariCP
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29");
-        config.setUsername("in2033t29_a");
-        config.setPassword("NvG2lCOEy_g");
+        try {
+            // Initialize the connection pool using HikariCP
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl("jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29");
+            config.setUsername("in2033t29_a");
+            config.setPassword("NvG2lCOEy_g");
 
-        // Optional: Configure additional HikariCP settings
-        config.setMaximumPoolSize(10); // Maximum number of connections in the pool
-        config.setMinimumIdle(5); // Minimum number of idle connections HikariCP tries to maintain
-        config.setIdleTimeout(300000); // 300 seconds (5 minutes) idle time before a connection is retired
-        config.setConnectionTimeout(30000); // 30 seconds to get a connection from the pool before timing out
+            // Optional: Configure additional HikariCP settings
+            config.setMaximumPoolSize(10);
+            config.setMinimumIdle(5);
+            config.setIdleTimeout(300000);
+            config.setConnectionTimeout(30000);
+            config.setPoolName("MyAppPool");
 
-        // Setting up a pool name for easier debugging or monitoring
-        config.setPoolName("MyAppPool");
+            // Setting a connection test query
+            config.setConnectionTestQuery("SELECT 1");
 
-        // Initialize the data source with configuration
-        dataSource = new HikariDataSource(config);
+            // Initialize the data source with configuration
+            dataSource = new HikariDataSource(config);
+        } catch (Exception e) {
+            // Log the exception or handle it accordingly
+            System.err.println("Error initializing the database pool: " + e.getMessage());
+            throw new RuntimeException("Failed to initialize the database pool", e);
+        }
     }
 
     private DatabaseManager() {
@@ -39,7 +46,7 @@ public class DatabaseManager {
     }
 
     public static void closeConnection() {
-        if (dataSource != null) {
+        if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close(); // Close the data source and hence all pooled connections
             System.out.println("Database connection pool closed.");
         }
