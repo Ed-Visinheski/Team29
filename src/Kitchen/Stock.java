@@ -1,20 +1,15 @@
 package Kitchen;
-
 import javax.swing.*;
 
 public class Stock {
+    // Main Stock Management
     private JPanel StockPanel;
-    private JTextField textIngredientID;
-    private JTextField textStockLevel;
-    private JTextField textStockThreshold;
-    private JTextField textDeliveryArrivalDate;
-    private JButton addButton;
-    private JButton updateButton;
-    private JButton saveButton;
-    private JButton deleteButton;
-    private JTable table1;
-    private JLabel img;
-    private JTextField textSearch;
-    private JButton searchButton;
-    private JPanel Menu;
+    private JButton addButton, updateButton, saveButton, deleteButton, searchButton;
+    private JTextField textIngredientID, textStockLevel, textStockThreshold, textDeliveryArrivalDate, textSearch;
+    private JScrollPane TableScrollPane; private JTable stockTable;
+
+    // Menu sidebar
+    private JPanel MenuPanel; private JLabel logo;
+    private JButton dashboardButton, menuManagementButton, inventoryManagementButton, ordersAndServicesButton, settingsButton, signInButton, signOutButton;
+
 }
