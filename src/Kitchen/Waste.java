@@ -1,19 +1,21 @@
 package Kitchen;
 
+import SaharTicketOrders.Orders;
 import net.proteanit.sql.DbUtils;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-public class Waste {
+public class Waste implements ActionListener {
     private JPanel MenuPanel;
+    private JFrame j;
     private JLabel logo;
     private JButton dashboardButton;
     private JButton menuManagementButton;
-    private JButton inventoryManagementButton;
+    private JButton StockManagementButton;
+    private JButton WasteManagementButton;
     private JButton ordersAndServicesButton;
     private JButton settingsButton;
-    private JButton signInButton;
     private JButton signOutButton;
     private JPanel WastePanel;
     private JLabel IngredientID;
@@ -30,11 +32,14 @@ public class Waste {
     private JButton updateButton;
     private JButton saveButton;
     private JButton deleteButton;
+    private JTable table_1;
     private JScrollPane TableScrollPane;
     private JTable wasteTable;
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
+    Statement stmt = null;
+    int chef = 0;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Waste");
@@ -44,8 +49,23 @@ public class Waste {
         frame.setVisible(true);
     }
 
+    void table_load(){
+        try{
+            stmt = connection.createStatement();
+            resultSet = stmt.executeQuery("SELECT * FROM Waste");
+            //rs.getString("orderID");
+            // pst = con.prepareStatement("select * from OrderClass");
+            //  ResultSet rs = pst.executeQuery();
+            table_1.setModel(DbUtils.resultSetToTableModel(resultSet));
+
+        }
+        catch(SQLException e3){e3.printStackTrace();}
+    }
+
     public Waste() {
         connect();
+        table_load();
+        j = new JFrame();
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,30 +101,39 @@ public class Waste {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //   openMenuManagementWindow();
+                chef = 1;
+                j.dispose();
+                DishConstructionUI dish = new DishConstructionUI(chef);
             }
         });
-        inventoryManagementButton.addActionListener(new ActionListener() {
+        StockManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // openInventoryManagementWindow();
+                // openStockManagementWindow();
+                j.dispose();
+                Stock stock = new Stock();
+            }
+        });
+        WasteManagementButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // openWasteManagementWindow();
+                j.dispose();
+                Waste waste = new Waste();
             }
         });
         ordersAndServicesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //  openOrdersAndServicesWindow();
+                j.dispose();
+                Orders o = new Orders();
             }
         });
         settingsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //   openSettingsWindow();
-            }
-        });
-        signInButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // performSignIn();
             }
         });
         signOutButton.addActionListener(new ActionListener() {
@@ -129,11 +158,18 @@ public class Waste {
         menuManagementFrame.setVisible(true);
     }**/
 
-     /*private void openInventoryManagementWindow() {
-     JFrame inventoryFrame = new JFrame("Inventory Management");
-    frame.setContentPane(new InventoryManagementPanel());
-    inventoryFrame.pack();
-    inventoryFrame.setVisible(true);
+     /*private void openStockManagementWindow() {
+     JFrame stockFrame = new JFrame("Stock Management");
+    frame.setContentPane(new StockManagementPanel());
+    stockFrame.pack();
+    stockFrame.setVisible(true);
+    }**/
+
+    /*private void openWasteManagementWindow() {
+     JFrame wasteFrame = new JFrame("Waste Management");
+    frame.setContentPane(new WasteManagementPanel());
+    wasteFrame.pack();
+    wasteFrame.setVisible(true);
     }**/
 
      /*private void openOrdersAndServicesWindow() {
@@ -141,9 +177,6 @@ public class Waste {
     frame.setContentPane(new OrdersAndServicesPanel());
     ordersFrame.pack();
     ordersFrame.setVisible(true);
-    }**/
-
-     /*private void performSignIn() {
     }**/
 
      /*private void performSignOut() {
@@ -291,6 +324,14 @@ public class Waste {
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: Failed to load waste data.");
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource()==ordersAndServicesButton){
+            j.dispose();
+            Orders o = new Orders();
         }
     }
 }

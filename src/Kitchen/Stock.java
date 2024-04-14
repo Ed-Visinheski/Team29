@@ -19,7 +19,8 @@ public class Stock {
     // Menu sidebar
     private JPanel MenuPanel;
     private JLabel logo;
-    private JButton dashboardButton, menuManagementButton, inventoryManagementButton, ordersAndServicesButton, settingsButton, signInButton, signOutButton;
+    private JButton dashboardButton, menuManagementButton, stockManagementButton, wasteManagementButton, ordersAndServicesButton, settingsButton, signOutButton;
+
 
 
     public static void main(String[] args) {
@@ -33,6 +34,14 @@ public class Stock {
     }
 
     public Stock() {
+        ImageIcon img = new ImageIcon("src/Kitchen/Img/Lancaster.jpeg");
+        JFrame frame = new JFrame("Stock Management");
+        frame.setContentPane(StockPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setIconImage(img.getImage());
+        frame.setVisible(true);
+
         connect();
         loadStockTable();
         searchButton.addActionListener(new ActionListener() {
@@ -129,10 +138,16 @@ public class Stock {
                 //   openMenuManagementWindow();
             }
         });
-        inventoryManagementButton.addActionListener(new ActionListener() {
+        stockManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // openInventoryManagementWindow();
+                //hello
+            }
+        });
+        wasteManagementButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //
             }
         });
         ordersAndServicesButton.addActionListener(new ActionListener() {
@@ -147,12 +162,6 @@ public class Stock {
                 //   openSettingsWindow();
             }
         });
-        signInButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // performSignIn();
-            }
-        });
         signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -160,7 +169,6 @@ public class Stock {
             }
         });
     }
-
     public void connect() {
         String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
         String user = "in2033t29_a";

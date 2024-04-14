@@ -26,19 +26,23 @@ public class Orders {
     private JTextField txtDishNumber;
     private JLabel jsTableNumber;
     private JTextField txtTableNumber;
+    private JLabel logo;
+    private JButton dashboardButton1;
+    private JButton menuManagementButton1;
+    private JButton inventoryManagementButton1;
+    private JButton ordersAndServicesButton1;
+    private JButton settingsButton;
+    private JButton signInButton1;
+    private JButton signOutButton1;
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;
     Connection con;
     PreparedStatement pst;
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Orders");
-        frame.setContentPane(new Orders().OrderPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-    }
+   /* public static void main(String[] args) {
+
+    }*/
 
     public void connect()
     {
@@ -74,6 +78,11 @@ public class Orders {
     }
 
     public Orders() {
+        JFrame frame = new JFrame("Orders");
+        frame.setContentPane(OrderPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
         connect();
         table_load();
         butSave.addActionListener(new ActionListener() {
