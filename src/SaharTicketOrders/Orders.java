@@ -26,6 +26,14 @@ public class Orders {
     private JTextField txtDishNumber;
     private JLabel jsTableNumber;
     private JTextField txtTableNumber;
+    private JLabel logo;
+    private JButton dashboardButton1;
+    private JButton menuManagementButton1;
+    private JButton inventoryManagementButton1;
+    private JButton ordersAndServicesButton1;
+    private JButton settingsButton;
+    private JButton signInButton1;
+    private JButton signOutButton1;
     Connection conn = null;
     Statement stmt = null;
     ResultSet rs = null;

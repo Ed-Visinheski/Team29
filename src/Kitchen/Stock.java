@@ -20,6 +20,7 @@ public class Stock {
     private JPanel MenuPanel;
     private JLabel logo;
     private JButton dashboardButton, menuManagementButton, inventoryManagementButton, ordersAndServicesButton, settingsButton, signInButton, signOutButton;
+    private JButton signOutButton1;
 
 
    /* public static void main(String[] args) {
@@ -168,7 +169,6 @@ public class Stock {
             }
         });
     }
-
     public void connect() {
         String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
         String user = "in2033t29_a";

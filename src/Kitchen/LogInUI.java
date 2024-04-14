@@ -20,7 +20,7 @@ public class LogInUI extends JFrame implements ActionListener {
         setBounds(10, 10, 370, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-
+        setLocationRelativeTo(null);
         container = getContentPane();
         container.setLayout(null);
 
