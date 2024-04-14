@@ -14,6 +14,7 @@ public class Waste implements ActionListener {
     private JButton dashboardButton;
     private JButton menuManagementButton;
     private JButton StockManagementButton;
+    private JButton WasteManagementButton;
     private JButton ordersAndServicesButton;
     private JButton settingsButton;
     private JButton signInButton;
@@ -110,9 +111,17 @@ public class Waste implements ActionListener {
         StockManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // openInventoryManagementWindow();
+                // openStockManagementWindow();
                 j.dispose();
                 Stock stock = new Stock();
+            }
+        });
+        WasteManagementButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // openWasteManagementWindow();
+                j.dispose();
+                Waste waste = new Waste();
             }
         });
         ordersAndServicesButton.addActionListener(new ActionListener() {
@@ -157,11 +166,11 @@ public class Waste implements ActionListener {
         menuManagementFrame.setVisible(true);
     }**/
 
-     /*private void openInventoryManagementWindow() {
-     JFrame inventoryFrame = new JFrame("Inventory Management");
-    frame.setContentPane(new InventoryManagementPanel());
-    inventoryFrame.pack();
-    inventoryFrame.setVisible(true);
+     /*private void openStockManagementWindow() {
+     JFrame inventoryFrame = new JFrame("Stock Management");
+    frame.setContentPane(new StockManagementPanel());
+    stockFrame.pack();
+    stockFrame.setVisible(true);
     }**/
 
      /*private void openOrdersAndServicesWindow() {
