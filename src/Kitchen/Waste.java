@@ -5,22 +5,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-public class waste {
-    private JPanel WastePanel;
-    private JLabel IngredientID;
-    private JLabel Quantity;
-    private JLabel Reason;
-    private JLabel Date;
-    private JTextField textId;
-    private JTextField textQuantity;
-    private JTextField textDate;
-    private JComboBox <String> textReason;
-    private JButton buttonAdd;
-    private JButton buttonUpdate;
-    private JButton buttonSave;
-    private JButton buttonDelete;
-    private JTable table;
-    private JLabel img;
+public class Waste {
+    private JPanel MenuPanel;
+    private JLabel logo;
     private JButton dashboardButton;
     private JButton menuManagementButton;
     private JButton inventoryManagementButton;
@@ -28,40 +15,57 @@ public class waste {
     private JButton settingsButton;
     private JButton signInButton;
     private JButton signOutButton;
+    private JPanel WastePanel;
+    private JLabel IngredientID;
+    private JLabel Quantity;
+    private JLabel Reason;
+    private JLabel Date;
+    private JTextField textIngredientID;
+    private JTextField textQuantity;
+    private JComboBox <String> textReason;
+    private JTextField textDate;
+    private JTextField textSearch;
+    private JButton searchButton;
+    private JButton addButton;
+    private JButton updateButton;
+    private JButton saveButton;
+    private JButton deleteButton;
+    private JScrollPane TableScrollPane;
+    private JTable wasteTable;
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Waste");
-        frame.setContentPane(new waste().WastePanel);
+        frame.setContentPane(new Waste().WastePanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
     }
 
-    public waste() {
+    public Waste() {
         connect();
-        buttonAdd.addActionListener(new ActionListener() {
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              //  clearFields();
+                //  clearFields();
                 AddWasteRecord();
             }
         });
-        buttonUpdate.addActionListener(new ActionListener() {
+        updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateWasteRecord();
             }
         });
-        buttonSave.addActionListener(new ActionListener() {
+        saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveWasteRecord();
             }
         });
-        buttonDelete.addActionListener(new ActionListener() {
+        deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteWasteRecord();
@@ -70,43 +74,43 @@ public class waste {
         dashboardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              //  showDashboardPanel();
+                //  showDashboardPanel();
             }
         });
         menuManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-             //   openMenuManagementWindow();
+                //   openMenuManagementWindow();
             }
         });
         inventoryManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               // openInventoryManagementWindow();
+                // openInventoryManagementWindow();
             }
         });
         ordersAndServicesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              //  openOrdersAndServicesWindow();
+                //  openOrdersAndServicesWindow();
             }
         });
         settingsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-             //   openSettingsWindow();
+                //   openSettingsWindow();
             }
         });
         signInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               // performSignIn();
+                // performSignIn();
             }
         });
         signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              //  performSignOut();
+                //  performSignOut();
             }
         });
     }
@@ -160,7 +164,7 @@ public class waste {
 
     // add button not working
     private void AddWasteRecord() {
-        String ingredientID = textId.getText();
+        String ingredientID = textIngredientID.getText();
         String quantity = textQuantity.getText();
         String reason = (String) textReason.getSelectedItem();
         String date = textDate.getText();
@@ -195,7 +199,7 @@ public class waste {
 
     //save button not working
     private void saveWasteRecord() {
-        String ingredientID = textId.getText();
+        String ingredientID = textIngredientID.getText();
         String quantity = textQuantity.getText();
         String reason = (String) textReason.getSelectedItem();
         String date = textDate.getText();
@@ -224,7 +228,7 @@ public class waste {
     }
 
     private void updateWasteRecord() {
-        String ingredientID = textId.getText();
+        String ingredientID = textIngredientID.getText();
         String quantity = textQuantity.getText();
         String reason = (String) textReason.getSelectedItem();
         String date = textDate.getText();
@@ -248,7 +252,7 @@ public class waste {
     }
 
     private void deleteWasteRecord() {
-        String ingredientID = textId.getText();
+        String ingredientID = textIngredientID.getText();
 
         try {
             String query = "DELETE FROM Waste WHERE ingredientID = ?";
@@ -266,7 +270,7 @@ public class waste {
     }
 
     private void clearFields() {
-        textId.setText("");
+        textIngredientID.setText("");
         textQuantity.setText("");
         textReason.setSelectedIndex(0);
         textDate.setText("");
@@ -283,10 +287,11 @@ public class waste {
             preparedStatement = connection.prepareStatement(query);
             resultSet = preparedStatement.executeQuery();
 
-            table.setModel(DbUtils.resultSetToTableModel(resultSet));
+            wasteTable.setModel(DbUtils.resultSetToTableModel(resultSet));
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: Failed to load waste data.");
         }
     }
 }
+
