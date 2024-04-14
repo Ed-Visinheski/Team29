@@ -16,7 +16,6 @@ public class Waste implements ActionListener {
     private JButton WasteManagementButton;
     private JButton ordersAndServicesButton;
     private JButton settingsButton;
-    private JButton signInButton;
     private JButton signOutButton;
     private JPanel WastePanel;
     private JLabel IngredientID;
@@ -137,12 +136,6 @@ public class Waste implements ActionListener {
                 //   openSettingsWindow();
             }
         });
-        signInButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // performSignIn();
-            }
-        });
         signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -184,9 +177,6 @@ public class Waste implements ActionListener {
     frame.setContentPane(new OrdersAndServicesPanel());
     ordersFrame.pack();
     ordersFrame.setVisible(true);
-    }**/
-
-     /*private void performSignIn() {
     }**/
 
      /*private void performSignOut() {

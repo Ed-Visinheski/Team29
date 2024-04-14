@@ -21,7 +21,6 @@ public class Dashboard {
     private JButton WasteManagementButton;
     private JButton ordersAndServicesButton;
     private JButton settingsButton;
-    private JButton signInButton;
     private JButton signOutButton;
     private JTextField textIngredientID;
     private JTextField textQuantity;
@@ -97,15 +96,6 @@ public class Dashboard {
                 if (e.getSource()==settingsButton){
                     j.dispose();
                  //   Settings s = new Settings();
-                }
-            }
-        });
-        signInButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource()==signInButton){
-                    j.dispose();
-                  //  SignIn signIn = new SignIn();
                 }
             }
         });

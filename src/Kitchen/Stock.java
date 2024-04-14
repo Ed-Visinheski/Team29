@@ -19,7 +19,7 @@ public class Stock {
     // Menu sidebar
     private JPanel MenuPanel;
     private JLabel logo;
-    private JButton dashboardButton, menuManagementButton, stockManagementButton, wasteManagementButton, ordersAndServicesButton, settingsButton, signInButton, signOutButton;
+    private JButton dashboardButton, menuManagementButton, stockManagementButton, wasteManagementButton, ordersAndServicesButton, settingsButton, signOutButton;
 
 
 
@@ -160,12 +160,6 @@ public class Stock {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //   openSettingsWindow();
-            }
-        });
-        signInButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // performSignIn();
             }
         });
         signOutButton.addActionListener(new ActionListener() {
