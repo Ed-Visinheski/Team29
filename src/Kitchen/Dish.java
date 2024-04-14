@@ -1,6 +1,6 @@
 package Kitchen;
 
-public class Dish extends KitchenToManagement.Dish{
+public class Dish extends KitchenToFOH.Dish{
     private int dishID;
     private String dishName;
    // private Recipe recipe;

@@ -18,6 +18,9 @@ public abstract class Dish implements IDish {
      */
     private String dishName;
 
+    public Dish(int dishID, String dishName, HashMap<Ingredient, Integer> ingredientList) {
+    }
+
     /**
      * Sets the name of the dish. This method allows changing the dish's name,
      * which is useful for updating or correcting dish information.
