@@ -13,6 +13,8 @@ public class BaseGUI extends JFrame {
     private JLabel logo;
     private JButton dashboardButton;
     private JButton menuManagementButton;
+    private JButton courseManagementButton;
+    private JButton dishManagementButton;
     private JButton StockManagementButton;
     private JButton WasteManagementButton;
     private JButton ordersAndServicesButton;
