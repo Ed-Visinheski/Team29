@@ -19,7 +19,7 @@ public class Stock {
     // Menu sidebar
     private JPanel MenuPanel;
     private JLabel logo;
-    private JButton dashboardButton, menuManagementButton, stockManagementButton, wasteManagement, ordersAndServicesButton, settingsButton, signInButton, signOutButton;
+    private JButton dashboardButton, menuManagementButton, stockManagementButton, wasteManagementButton, ordersAndServicesButton, settingsButton, signInButton, signOutButton;
 
 
 
