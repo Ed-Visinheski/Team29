@@ -1,16 +1,19 @@
 package Kitchen;
 
+import SaharTicketOrders.Orders;
 import net.proteanit.sql.DbUtils;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-public class Waste {
+public class Waste implements ActionListener {
     private JPanel MenuPanel;
+
+    private JFrame j;
     private JLabel logo;
     private JButton dashboardButton;
     private JButton menuManagementButton;
-    private JButton inventoryManagementButton;
+    private JButton StockManagementButton;
     private JButton ordersAndServicesButton;
     private JButton settingsButton;
     private JButton signInButton;
@@ -30,11 +33,14 @@ public class Waste {
     private JButton updateButton;
     private JButton saveButton;
     private JButton deleteButton;
+    private JTable table_1;
     private JScrollPane TableScrollPane;
     private JTable wasteTable;
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
+    Statement stmt = null;
+    int chef = 0;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Waste");
@@ -44,8 +50,23 @@ public class Waste {
         frame.setVisible(true);
     }
 
+    void table_load(){
+        try{
+            stmt = connection.createStatement();
+            resultSet = stmt.executeQuery("SELECT * FROM Waste");
+            //rs.getString("orderID");
+            // pst = con.prepareStatement("select * from OrderClass");
+            //  ResultSet rs = pst.executeQuery();
+            table_1.setModel(DbUtils.resultSetToTableModel(resultSet));
+
+        }
+        catch(SQLException e3){e3.printStackTrace();}
+    }
+
     public Waste() {
         connect();
+        table_load();
+        j = new JFrame();
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,18 +102,25 @@ public class Waste {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //   openMenuManagementWindow();
+                chef = 1;
+                j.dispose();
+                DishConstructionUI dish = new DishConstructionUI(chef);
             }
         });
-        inventoryManagementButton.addActionListener(new ActionListener() {
+        StockManagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // openInventoryManagementWindow();
+                j.dispose();
+                Stock stock = new Stock();
             }
         });
         ordersAndServicesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //  openOrdersAndServicesWindow();
+                j.dispose();
+                Orders o = new Orders();
             }
         });
         settingsButton.addActionListener(new ActionListener() {
@@ -291,6 +319,14 @@ public class Waste {
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: Failed to load waste data.");
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource()==ordersAndServicesButton){
+            j.dispose();
+            Orders o = new Orders();
         }
     }
 }

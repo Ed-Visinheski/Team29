@@ -22,7 +22,7 @@ public class Stock {
     private JButton dashboardButton, menuManagementButton, inventoryManagementButton, ordersAndServicesButton, settingsButton, signInButton, signOutButton;
 
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         ImageIcon img = new ImageIcon("src/Kitchen/Img/Lancaster.jpeg");
         JFrame frame = new JFrame("Stock Management");
         frame.setContentPane(new Stock().StockPanel);
@@ -30,9 +30,17 @@ public class Stock {
         frame.pack();
         frame.setIconImage(img.getImage());
         frame.setVisible(true);
-    }
+    }*/
 
     public Stock() {
+        ImageIcon img = new ImageIcon("src/Kitchen/Img/Lancaster.jpeg");
+        JFrame frame = new JFrame("Stock Management");
+        frame.setContentPane(StockPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setIconImage(img.getImage());
+        frame.setVisible(true);
+
         connect();
         loadStockTable();
         searchButton.addActionListener(new ActionListener() {

@@ -32,13 +32,9 @@ public class Orders {
     Connection con;
     PreparedStatement pst;
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Orders");
-        frame.setContentPane(new Orders().OrderPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-    }
+   /* public static void main(String[] args) {
+
+    }*/
 
     public void connect()
     {
@@ -74,6 +70,11 @@ public class Orders {
     }
 
     public Orders() {
+        JFrame frame = new JFrame("Orders");
+        frame.setContentPane(OrderPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
         connect();
         table_load();
         butSave.addActionListener(new ActionListener() {
