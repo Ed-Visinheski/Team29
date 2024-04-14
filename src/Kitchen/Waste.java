@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 public class Waste implements ActionListener {
     private JPanel MenuPanel;
-
     private JFrame j;
     private JLabel logo;
     private JButton dashboardButton;
@@ -167,10 +166,17 @@ public class Waste implements ActionListener {
     }**/
 
      /*private void openStockManagementWindow() {
-     JFrame inventoryFrame = new JFrame("Stock Management");
+     JFrame stockFrame = new JFrame("Stock Management");
     frame.setContentPane(new StockManagementPanel());
     stockFrame.pack();
     stockFrame.setVisible(true);
+    }**/
+
+    /*private void openWasteManagementWindow() {
+     JFrame wasteFrame = new JFrame("Waste Management");
+    frame.setContentPane(new WasteManagementPanel());
+    wasteFrame.pack();
+    wasteFrame.setVisible(true);
     }**/
 
      /*private void openOrdersAndServicesWindow() {
