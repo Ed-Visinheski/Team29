@@ -856,6 +856,9 @@ public class KitchenManagementApp extends JFrame {
             submitButton.setVisible(isDrafts);
             deleteButton.setVisible(isDrafts);
             recipeButton.setVisible(isSubmitted);
+            saveButton.setEnabled(isDrafts);
+            submitButton.setEnabled(isDrafts);
+            deleteButton.setEnabled(isDrafts);
 
             textArea.setEditable(isDrafts || isSubmitted);
             fileNameField.setEditable(isDrafts);
