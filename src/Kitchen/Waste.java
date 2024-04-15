@@ -1,338 +1,162 @@
 package Kitchen;
 
-import SaharTicketOrders.Orders;
 import net.proteanit.sql.DbUtils;
+
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-public class Waste implements ActionListener {
-    private JPanel MenuPanel;
-    private JFrame j;
-    private JLabel logo;
-    private JButton dashboardButton;
-    private JButton menuManagementButton;
-    private JButton StockManagementButton;
-    private JButton WasteManagementButton;
-    private JButton ordersAndServicesButton;
-    private JButton settingsButton;
-    private JButton signOutButton;
-    private JPanel WastePanel;
-    private JLabel IngredientID;
-    private JLabel Quantity;
-    private JLabel Reason;
-    private JLabel Date;
-    private JTextField textIngredientID;
-    private JTextField textQuantity;
-    private JComboBox <String> textReason;
-    private JTextField textDate;
-    private JTextField textSearch;
-    private JButton searchButton;
-    private JButton addButton;
-    private JButton updateButton;
-    private JButton saveButton;
-    private JButton deleteButton;
-    private JTable table_1;
-    private JScrollPane TableScrollPane;
-    private JTable wasteTable;
-    private Connection connection;
-    private PreparedStatement preparedStatement;
-    private ResultSet resultSet;
-    Statement stmt = null;
-    int chef = 0;
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Waste");
-        frame.setContentPane(new Waste().WastePanel);
+
+public class Waste extends JFrame {
+    private JFrame frame;
+    private JPanel mainPanel;
+    private JTextField textIngredientID, textQuantity, textDate;
+    private JComboBox<String> comboReason;
+    private JTable wasteTable;
+    private JScrollPane scrollPane;
+    private JButton addButton, updateButton, deleteButton;
+    private Connection connection;
+
+    public Waste() {
+        initializeUI();
+        connectDatabase();
+        loadTableData();
+    }
+
+    private void initializeUI() {
+        frame = new JFrame("Waste Management");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
+        frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null);
+
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+        textIngredientID = new JTextField();
+        textQuantity = new JTextField();
+        textDate = new JTextField();
+        comboReason = new JComboBox<>(new String[]{"Expired", "Damaged", "Other"});
+
+        inputPanel.add(new JLabel("Ingredient ID:"));
+        inputPanel.add(textIngredientID);
+        inputPanel.add(new JLabel("Quantity:"));
+        inputPanel.add(textQuantity);
+        inputPanel.add(new JLabel("Reason:"));
+        inputPanel.add(comboReason);
+        inputPanel.add(new JLabel("Date:"));
+        inputPanel.add(textDate);
+
+        addButton = new JButton("Add");
+        addButton.addActionListener(e -> addWasteRecord());
+        updateButton = new JButton("Update");
+        updateButton.addActionListener(e -> updateWasteRecord());
+        deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(e -> deleteWasteRecord());
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(addButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(deleteButton);
+
+        mainPanel.add(inputPanel, BorderLayout.NORTH);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        wasteTable = new JTable();
+        scrollPane = new JScrollPane(wasteTable);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
         frame.setVisible(true);
     }
 
-    void table_load(){
-        try{
-            stmt = connection.createStatement();
-            resultSet = stmt.executeQuery("SELECT * FROM Waste");
-            //rs.getString("orderID");
-            // pst = con.prepareStatement("select * from OrderClass");
-            //  ResultSet rs = pst.executeQuery();
-            table_1.setModel(DbUtils.resultSetToTableModel(resultSet));
-
-        }
-        catch(SQLException e3){e3.printStackTrace();}
-    }
-
-    public Waste() {
-        connect();
-        table_load();
-        j = new JFrame();
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //  clearFields();
-                AddWasteRecord();
-            }
-        });
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateWasteRecord();
-            }
-        });
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveWasteRecord();
-            }
-        });
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteWasteRecord();
-            }
-        });
-        dashboardButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //  showDashboardPanel();
-            }
-        });
-        menuManagementButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //   openMenuManagementWindow();
-                chef = 1;
-                j.dispose();
-                DishConstructionUI dish = new DishConstructionUI(chef);
-            }
-        });
-        StockManagementButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // openStockManagementWindow();
-                j.dispose();
-                Stock stock = new Stock();
-            }
-        });
-        WasteManagementButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // openWasteManagementWindow();
-                j.dispose();
-                Waste waste = new Waste();
-            }
-        });
-        ordersAndServicesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //  openOrdersAndServicesWindow();
-                j.dispose();
-                Orders o = new Orders();
-            }
-        });
-        settingsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //   openSettingsWindow();
-            }
-        });
-        signOutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //  performSignOut();
-            }
-        });
-    }
-
-    /*private void showDashboardPanel() {
-        JFrame frame = new JFrame("Dashboard");
-        frame.setContentPane(new waste().dashboardPanel);
-        dashboardFrame.pack();
-        dashboardFrame.setVisible(true);
-    }**/
-
-     /*private void openMenuManagementWindow() {
-        JFrame frame = new JFrame("Menu Management");
-        frame.setContentPane(new waste().menuManagementPanel);
-        menuManagementFrame.pack();
-        menuManagementFrame.setVisible(true);
-    }**/
-
-     /*private void openStockManagementWindow() {
-     JFrame stockFrame = new JFrame("Stock Management");
-    frame.setContentPane(new StockManagementPanel());
-    stockFrame.pack();
-    stockFrame.setVisible(true);
-    }**/
-
-    /*private void openWasteManagementWindow() {
-     JFrame wasteFrame = new JFrame("Waste Management");
-    frame.setContentPane(new WasteManagementPanel());
-    wasteFrame.pack();
-    wasteFrame.setVisible(true);
-    }**/
-
-     /*private void openOrdersAndServicesWindow() {
-     JFrame ordersFrame = new JFrame("Orders and Services");
-    frame.setContentPane(new OrdersAndServicesPanel());
-    ordersFrame.pack();
-    ordersFrame.setVisible(true);
-    }**/
-
-     /*private void performSignOut() {
-    }**/
-
-    public void connect() {
-        String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
-        String user = "in2033t29_a";
-        String password = "NvG2lCOEy_g";
-
+    private void connectDatabase() {
         try {
-            connection = DriverManager.getConnection(url, user, password);
+            Connection conn = Kitchen.DatabaseManager.getConnection();
             System.out.println("Connected to database successfully!");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database connection failed: " + ex.getMessage());
         }
     }
 
-    // add button not working
-    private void AddWasteRecord() {
+    private void addWasteRecord() {
         String ingredientID = textIngredientID.getText();
         String quantity = textQuantity.getText();
-        String reason = (String) textReason.getSelectedItem();
+        String reason = comboReason.getSelectedItem().toString();
         String date = textDate.getText();
 
-        if (connection == null) {
-            JOptionPane.showMessageDialog(null, "Database connection is not established.");
-            return;
-        }
-
-        try {
-            String query = "INSERT INTO Waste (ingredientID, quantity, reason, date) VALUES (?, ?, ?, ?)";
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, ingredientID);
-            preparedStatement.setString(2, quantity);
-            preparedStatement.setString(3, reason);
-            preparedStatement.setString(4, date);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(null, "Added to Waste record successfully!");
-                clearFields();
+        String query = "INSERT INTO Waste (ingredientID, quantity, reason, date) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
+            pst.setString(1, ingredientID);
+            pst.setString(2, quantity);
+            pst.setString(3, reason);
+            pst.setString(4, date);
+            int result = pst.executeUpdate();
+            if (result > 0) {
+                JOptionPane.showMessageDialog(null, "Waste record added successfully!");
                 loadTableData();
             } else {
-                JOptionPane.showMessageDialog(null, "Failed to add to Waste record.");
+                JOptionPane.showMessageDialog(null, "Failed to add waste record.");
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error: Failed adding to Waste record.");
-        }
-    }
-
-    //save button not working
-    private void saveWasteRecord() {
-        String ingredientID = textIngredientID.getText();
-        String quantity = textQuantity.getText();
-        String reason = (String) textReason.getSelectedItem();
-        String date = textDate.getText();
-
-        System.out.println("Ingredient ID: " + ingredientID);
-        System.out.println("Quantity: " + quantity);
-        System.out.println("Reason: " + reason);
-        System.out.println("Date: " + date);
-
-        try {
-            String query = "INSERT INTO Waste (ingredientID, quantity, reason, date) VALUES (?, ?, ?, ?)";
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, ingredientID);
-            preparedStatement.setString(2, quantity);
-            preparedStatement.setString(3, reason);
-            preparedStatement.setString(4, date);
-
-            preparedStatement.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Waste record added successfully!");
-            clearFields();
-            loadTableData();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error: Failed to add waste record.");
+            JOptionPane.showMessageDialog(null, "Error adding waste record.");
         }
     }
 
     private void updateWasteRecord() {
         String ingredientID = textIngredientID.getText();
         String quantity = textQuantity.getText();
-        String reason = (String) textReason.getSelectedItem();
+        String reason = comboReason.getSelectedItem().toString();
         String date = textDate.getText();
 
-        try {
-            String query = "UPDATE Waste SET quantity = ?, reason = ?, date = ? WHERE ingredientID = ?";
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, quantity);
-            preparedStatement.setString(2, reason);
-            preparedStatement.setString(3, date);
-            preparedStatement.setString(4, ingredientID);
-
-            preparedStatement.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Waste record updated successfully!");
-            clearFields();
-            loadTableData();
+        String query = "UPDATE Waste SET quantity = ?, reason = ?, date = ? WHERE ingredientID = ?";
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
+            pst.setString(1, quantity);
+            pst.setString(2, reason);
+            pst.setString(3, date);
+            pst.setString(4, ingredientID);
+            int result = pst.executeUpdate();
+            if (result > 0) {
+                JOptionPane.showMessageDialog(null, "Waste record updated successfully!");
+                loadTableData();
+            } else {
+                JOptionPane.showMessageDialog(null, "Failed to update waste record.");
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error: Failed to update waste record.");
+            JOptionPane.showMessageDialog(null, "Error updating waste record.");
         }
     }
 
     private void deleteWasteRecord() {
         String ingredientID = textIngredientID.getText();
-
-        try {
-            String query = "DELETE FROM Waste WHERE ingredientID = ?";
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, ingredientID);
-
-            preparedStatement.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Waste record deleted successfully!");
-            clearFields();
-            loadTableData();
+        String query = "DELETE FROM Waste WHERE ingredientID = ?";
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
+            pst.setString(1, ingredientID);
+            int result = pst.executeUpdate();
+            if (result > 0) {
+                JOptionPane.showMessageDialog(null, "Waste record deleted successfully!");
+                loadTableData();
+            } else {
+                JOptionPane.showMessageDialog(null, "Failed to delete waste record.");
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error: Failed to delete waste record.");
+            JOptionPane.showMessageDialog(null, "Error deleting waste record.");
         }
     }
 
-    private void clearFields() {
-        textIngredientID.setText("");
-        textQuantity.setText("");
-        textReason.setSelectedIndex(0);
-        textDate.setText("");
-    }
-
-    //table not loading, only after updating
     private void loadTableData() {
-        if (connection == null) {
-            System.out.println("Database connection is not established");
-            return;
-        }
         try {
-            String query = "SELECT * FROM Waste";
-            preparedStatement = connection.prepareStatement(query);
-            resultSet = preparedStatement.executeQuery();
-
-            wasteTable.setModel(DbUtils.resultSetToTableModel(resultSet));
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Waste");
+            wasteTable.setModel(DbUtils.resultSetToTableModel(rs));
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error: Failed to load waste data.");
+            JOptionPane.showMessageDialog(null, "Failed to load waste data: " + ex.getMessage());
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource()==ordersAndServicesButton){
-            j.dispose();
-            Orders o = new Orders();
-        }
-    }
 }
-

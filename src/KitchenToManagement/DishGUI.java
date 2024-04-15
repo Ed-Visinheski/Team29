@@ -189,8 +189,4 @@ public class DishGUI extends JFrame {
             photoPathField.setText(file.getAbsolutePath()); // Display file path instead of image preview
         }
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new DishGUI().setVisible(true));
-    }
 }

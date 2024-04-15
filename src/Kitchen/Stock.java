@@ -1,208 +1,117 @@
 package Kitchen;
+
 import net.proteanit.sql.DbUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 
 public class Stock {
-    private Connection connection;
-    private PreparedStatement pstm;
-    private ResultSet resultSet;
-    // Main Stock Management
-    private JPanel StockPanel;
-    private JButton searchButton, updateButton;
+    private JFrame frame;
+    private JTable stockTable;
     private JTextField textIngredientID, textIngredientName, textStockLevel, textStockThreshold, textDeliveryArrivalDate;
-    private JScrollPane TableScrollPane; private JTable stockTable;
-
-    // Menu sidebar
-    private JPanel MenuPanel;
-    private JLabel logo;
-    private JButton dashboardButton, menuManagementButton, stockManagementButton, wasteManagementButton, ordersAndServicesButton, settingsButton, signOutButton;
-
-
-
-    public static void main(String[] args) {
-        ImageIcon img = new ImageIcon("src/Kitchen/Img/Lancaster.jpeg");
-        JFrame frame = new JFrame("Stock Management");
-        frame.setContentPane(new Stock().StockPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setIconImage(img.getImage());
-        frame.setVisible(true);
-    }
+    private JButton searchButton, updateButton;
 
     public Stock() {
-        ImageIcon img = new ImageIcon("src/Kitchen/Img/Lancaster.jpeg");
-        JFrame frame = new JFrame("Stock Management");
-        frame.setContentPane(StockPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setIconImage(img.getImage());
-        frame.setVisible(true);
-
-        connect();
+        initializeUI();
         loadStockTable();
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String id, name, level, threshold, date;
-                id = textIngredientID.getText();
-                name = textIngredientName.getText();
-                level = textStockLevel.getText();
-                threshold = textStockThreshold.getText();
-                date = textDeliveryArrivalDate.getText();
-                try {
-                    String sql = "SELECT * FROM Stock WHERE 1=1";
-                    if (! id.isEmpty()) sql += " AND ingredientID = ?";
-                    if (! name.isEmpty()) sql += " AND ingredientName = ?";
-                    if (! level.isEmpty()) sql += " AND stockLevel = ?";
-                    if (! threshold.isEmpty()) sql += " AND stockThreshold = ?";
-                    if (! date.isEmpty()) sql += " AND deliveryArrivalDate = ?";
-
-                    int parameterIndex = 1;
-                    if (! id.isEmpty()) pstm.setString(parameterIndex++, id);
-                    if (! name.isEmpty()) pstm.setString(parameterIndex++, name);
-                    if (! level.isEmpty()) pstm.setString(parameterIndex++, level);
-                    if (! threshold.isEmpty()) pstm.setString(parameterIndex++, threshold);
-                    if (! date.isEmpty()) pstm.setString(parameterIndex++, date);
-
-                    pstm = connection.prepareStatement(sql);
-                    resultSet = pstm.executeQuery();
-                    stockTable.setModel(DbUtils.resultSetToTableModel(resultSet));
-                    if (parameterIndex == 1) JOptionPane.showMessageDialog(null, "Enter values to search for...");
-                    else JOptionPane.showMessageDialog(null, "Stock Searched...");
-                    clearTextFields();
-                } catch (SQLException e8) {
-                    e8.printStackTrace();
-                }
-            }
-        });
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String id, name, level, threshold, date;
-                id = textIngredientID.getText();
-                name = textIngredientName.getText();
-                level = textStockLevel.getText();
-                threshold = textStockThreshold.getText();
-                date = textDeliveryArrivalDate.getText();
-
-                try {
-                    String sql = "UPDATE Stock SET ";
-                    //identifier
-                    if (!id.isEmpty()) sql += "ingredientID = '" + id + "'";
-                    else if (!name.isEmpty()) sql += "ingredientName = '" + name + "'";
-                    else {
-                        JOptionPane.showMessageDialog(null, "Enter ingredientID or ingredientName to update..."); return;
-                    }
-
-                    if (!level.isEmpty()) sql += ", stockLevel = '" + level + "'";
-                    if (!threshold.isEmpty()) sql += ", stockThreshold = '" + threshold + "'";
-                    if (!date.isEmpty())
-                        if(date.contentEquals("NULL")) sql += ", deliveryArrivalDate = " + date;
-                        else sql += ", deliveryArrivalDate = '" + date + "'";
-                    sql += " WHERE ";
-
-                    if (!id.isEmpty()) sql += "ingredientID = '" + id + "'";
-                    else sql += "ingredientName = '" + name + "'";
-
-                    pstm = connection.prepareStatement(sql);
-                    int rowsAffected = pstm.executeUpdate();
-
-                    if (rowsAffected > 0) {
-                        JOptionPane.showMessageDialog(null, "Stock Updated!");
-                        System.out.println("Stock Updated...");
-                        loadStockTable();
-                    } else
-                        JOptionPane.showMessageDialog(null, "FAILED: Stock Update");
-
-                    clearTextFields();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        //Menu Side
-        dashboardButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //  showDashboardPanel();
-            }
-        });
-        menuManagementButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //   openMenuManagementWindow();
-            }
-        });
-        stockManagementButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //hello
-            }
-        });
-        wasteManagementButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //
-            }
-        });
-        ordersAndServicesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //  openOrdersAndServicesWindow();
-            }
-        });
-        settingsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //   openSettingsWindow();
-            }
-        });
-        signOutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //  performSignOut();
-            }
-        });
     }
-    public void connect() {
-        String url = "jdbc:mysql://smcse-stuproj00.city.ac.uk:3306/in2033t29";
-        String user = "in2033t29_a";
-        String password = "NvG2lCOEy_g";
 
-        try {
-            connection = DriverManager.getConnection(url, user, password);
-            System.out.println("Connected to database successfully!");
+    private void initializeUI() {
+        frame = new JFrame("Stock Management");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout(10, 10)); // Add padding between components
+
+        // Input panel setup
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(5, 2, 5, 5)); // Consistent spacing between grid elements
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding around the panel
+
+        inputPanel.add(new JLabel("Ingredient ID:"));
+        textIngredientID = new JTextField();
+        inputPanel.add(textIngredientID);
+
+        inputPanel.add(new JLabel("Ingredient Name:"));
+        textIngredientName = new JTextField();
+        inputPanel.add(textIngredientName);
+
+        inputPanel.add(new JLabel("Stock Level:"));
+        textStockLevel = new JTextField();
+        inputPanel.add(textStockLevel);
+
+        inputPanel.add(new JLabel("Stock Threshold:"));
+        textStockThreshold = new JTextField();
+        inputPanel.add(textStockThreshold);
+
+        inputPanel.add(new JLabel("Delivery Arrival Date:"));
+        textDeliveryArrivalDate = new JTextField();
+        inputPanel.add(textDeliveryArrivalDate);
+
+        // Button panel setup
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        searchButton = new JButton("Search");
+        updateButton = new JButton("Update");
+        buttonPanel.add(searchButton);
+        buttonPanel.add(updateButton);
+
+        // Table setup
+        stockTable = new JTable();
+        JScrollPane scrollPane = new JScrollPane(stockTable); // Ensures the table is scrollable
+        scrollPane.setPreferredSize(new Dimension(700, 200)); // Set preferred size to influence layout sizing
+
+        // Adding components to frame
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(buttonPanel, BorderLayout.CENTER);
+        frame.add(scrollPane, BorderLayout.SOUTH);
+
+        // Action listeners for buttons
+        searchButton.addActionListener(this::searchStock);
+        updateButton.addActionListener(this::updateStock);
+
+        // Finalize frame setup
+        frame.pack(); // Pack to respect preferred sizes
+        frame.setLocationRelativeTo(null); // Center on screen
+        frame.setVisible(true);
+    }
+
+    private void loadStockTable() {
+        try (Connection connection = Kitchen.DatabaseManager.getConnection();
+             PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock")) {
+            ResultSet rs = pst.executeQuery();
+            stockTable.setModel(DbUtils.resultSetToTableModel(rs));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
-    private void loadStockTable() {
-        if (connection == null) {
-            System.out.println("Database connection is not established");
-        } else {
-            try {
-                String query = "SELECT * FROM Stock";
-                pstm = connection.prepareStatement(query);
-                resultSet = pstm.executeQuery();
-                stockTable.setModel(DbUtils.resultSetToTableModel(resultSet));
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error: Failed to load stock data.");
-            }
+    private void searchStock(ActionEvent e) {
+        try (Connection connection = Kitchen.DatabaseManager.getConnection();
+             PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock WHERE ingredientID = ?")) {
+            pst.setInt(1, Integer.parseInt(textIngredientID.getText()));
+            ResultSet rs = pst.executeQuery();
+            stockTable.setModel(DbUtils.resultSetToTableModel(rs));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 
-    public void clearTextFields(){
-        textIngredientID.setText("");
-        textIngredientName.setText("");
-        textStockLevel.setText("");
-        textStockThreshold.setText("");
-        textDeliveryArrivalDate.setText("");
+    private void updateStock(ActionEvent e) {
+        try (Connection connection = Kitchen.DatabaseManager.getConnection();
+             PreparedStatement pst = connection.prepareStatement("UPDATE Stock SET ingredientName = ?, stockLevel = ?, stockThreshold = ?, deliveryArrivalDate = ? WHERE ingredientID = ?")) {
+            pst.setString(1, textIngredientName.getText());
+            pst.setInt(2, Integer.parseInt(textStockLevel.getText()));
+            pst.setInt(3, Integer.parseInt(textStockThreshold.getText()));
+            pst.setString(4, textDeliveryArrivalDate.getText());
+            pst.setInt(5, Integer.parseInt(textIngredientID.getText()));
+            pst.executeUpdate();
+            loadStockTable();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(Stock::new);
     }
 }
