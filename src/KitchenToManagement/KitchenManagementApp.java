@@ -52,7 +52,7 @@ public class KitchenManagementApp extends JFrame {
         tabbedPane.addTab("Create Menus", null, menuCreatorPanel, "Create and manage menus");
         tabbedPane.addTab("View Dishes", null, dishViewerPanel, "View and manage dishes");
         tabbedPane.addTab("Add Dish", null, dishGUIPanel, "Add a new dish");
-        tabbedPane.addTab("Dish Construction", null, dishConstructionUIPanel, "Construct and manage dishes");
+        tabbedPane.addTab("Recipe", null, dishConstructionUIPanel, "Construct and manage dishes");
         tabbedPane.addTab("Waste Management", null, wastePanel, "Manage kitchen waste");
         tabbedPane.addTab("Orders", null, ordersPanel, "Manage kitchen orders");
         tabbedPane.addTab("Stock", null, stockPanel, "Manage kitchen stock");
@@ -156,7 +156,7 @@ public class KitchenManagementApp extends JFrame {
 
 
 
-    public class Orders extends JPanel{
+    public class Orders extends JPanel {
         private JTextField txtOrderNumber, txtDishNumber, txtTableNumber, txtStatus, txtId;
         private JButton butSave, butUpdate, butDelete, butSearch;
         private JTable tableOrders;
@@ -168,31 +168,29 @@ public class KitchenManagementApp extends JFrame {
 
         private void initializeUI() {
             setLayout(new BorderLayout());
-            JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10)); // Use 0 to allow any number of rows
-            formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
+            JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+            formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            // Adding labels and text fields with labels on left and fields on right
             formPanel.add(new JLabel("Order Number:"));
-            txtOrderNumber = new JTextField(10);
+            txtOrderNumber = new JTextField();
             formPanel.add(txtOrderNumber);
 
             formPanel.add(new JLabel("Dish Number:"));
-            txtDishNumber = new JTextField(10);
+            txtDishNumber = new JTextField();
             formPanel.add(txtDishNumber);
 
             formPanel.add(new JLabel("Table Number:"));
-            txtTableNumber = new JTextField(10);
+            txtTableNumber = new JTextField();
             formPanel.add(txtTableNumber);
 
             formPanel.add(new JLabel("Status:"));
-            txtStatus = new JTextField(10);
+            txtStatus = new JTextField();
             formPanel.add(txtStatus);
 
             formPanel.add(new JLabel("Search by ID:"));
-            txtId = new JTextField(10);
+            txtId = new JTextField();
             formPanel.add(txtId);
 
-            // Buttons panel
             JPanel buttonPanel = new JPanel();
             butSave = new JButton("Save");
             butUpdate = new JButton("Update");
@@ -204,21 +202,23 @@ public class KitchenManagementApp extends JFrame {
             buttonPanel.add(butDelete);
             buttonPanel.add(butSearch);
 
-            // Setting up the table
+            // Attach listeners using lambda expressions for brevity
+            butSave.addActionListener(e -> saveOrder());
+            butUpdate.addActionListener(e -> updateOrder());
+            butDelete.addActionListener(e -> deleteOrder());
+            butSearch.addActionListener(e -> searchOrder());
+
             tableOrders = new JTable();
-            JScrollPane scrollPane = new JScrollPane(tableOrders); // Ensure table is scrollable
-            scrollPane.setPreferredSize(new Dimension(500, 200)); // Setting preferred size for scrollPane
+            JScrollPane scrollPane = new JScrollPane(tableOrders);
+
             add(formPanel, BorderLayout.NORTH);
             add(buttonPanel, BorderLayout.CENTER);
             add(scrollPane, BorderLayout.SOUTH);
-            // Adding components to frame
         }
 
-
         private void loadTableData() {
-            try {
-                Connection conn = Kitchen.DatabaseManager.getConnection();
-                PreparedStatement pst = conn.prepareStatement("SELECT * FROM OrderClass");
+            try (Connection conn = Kitchen.DatabaseManager.getConnection();
+                 PreparedStatement pst = conn.prepareStatement("SELECT * FROM OrderClass")) {
                 ResultSet rs = pst.executeQuery();
                 tableOrders.setModel(DbUtils.resultSetToTableModel(rs));
             } catch (SQLException ex) {
@@ -226,30 +226,13 @@ public class KitchenManagementApp extends JFrame {
             }
         }
 
-        private void actionPerformed(ActionEvent e) throws SQLException {
-            JButton source = (JButton) e.getSource();
-            if (source == butSave) {
-                saveOrder();
-            } else if (source == butUpdate) {
-                updateOrder();
-            } else if (source == butDelete) {
-                deleteOrder();
-            } else if (source == butSearch) {
-                searchOrder();
-            }
-        }
-        private void saveOrder() throws SQLException {
-            Connection conn = Kitchen.DatabaseManager.getConnection();
-            String orderNumber = txtOrderNumber.getText();
-            String dishNumber = txtDishNumber.getText();
-            String tableNumber = txtTableNumber.getText();
-            String status = txtStatus.getText();
-            String query = "INSERT INTO OrderClass (orderNumber, dishNumber, tableNumber, status) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement pst = conn.prepareStatement(query)) {
-                pst.setString(1, orderNumber);
-                pst.setString(2, dishNumber);
-                pst.setString(3, tableNumber);
-                pst.setString(4, status);
+        private void saveOrder() {
+            try (Connection conn = Kitchen.DatabaseManager.getConnection();
+                 PreparedStatement pst = conn.prepareStatement("INSERT INTO OrderClass (orderNumber, dishNumber, tableNumber, status) VALUES (?, ?, ?, ?)")) {
+                pst.setString(1, txtOrderNumber.getText());
+                pst.setString(2, txtDishNumber.getText());
+                pst.setString(3, txtTableNumber.getText());
+                pst.setString(4, txtStatus.getText());
                 int result = pst.executeUpdate();
                 if (result > 0) {
                     JOptionPane.showMessageDialog(null, "Order added successfully!");
@@ -259,21 +242,17 @@ public class KitchenManagementApp extends JFrame {
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error adding order.");
+                JOptionPane.showMessageDialog(null, "Error adding order: " + ex.getMessage());
             }
         }
-        private void updateOrder() throws SQLException {
-            Connection conn = Kitchen.DatabaseManager.getConnection();
-            String orderNumber = txtOrderNumber.getText();
-            String dishNumber = txtDishNumber.getText();
-            String tableNumber = txtTableNumber.getText();
-            String status = txtStatus.getText();
-            String query = "UPDATE OrderClass SET dishNumber = ?, tableNumber = ?, status = ? WHERE orderNumber = ?";
-            try (PreparedStatement pst = conn.prepareStatement(query)) {
-                pst.setString(1, dishNumber);
-                pst.setString(2, tableNumber);
-                pst.setString(3, status);
-                pst.setString(4, orderNumber);
+
+        private void updateOrder() {
+            try (Connection conn = Kitchen.DatabaseManager.getConnection();
+                 PreparedStatement pst = conn.prepareStatement("UPDATE OrderClass SET dishNumber = ?, tableNumber = ?, status = ? WHERE orderNumber = ?")) {
+                pst.setString(1, txtDishNumber.getText());
+                pst.setString(2, txtTableNumber.getText());
+                pst.setString(3, txtStatus.getText());
+                pst.setString(4, txtOrderNumber.getText());
                 int result = pst.executeUpdate();
                 if (result > 0) {
                     JOptionPane.showMessageDialog(null, "Order updated successfully!");
@@ -283,15 +262,14 @@ public class KitchenManagementApp extends JFrame {
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error updating order.");
+                JOptionPane.showMessageDialog(null, "Error updating order: " + ex.getMessage());
             }
         }
-        private void deleteOrder() throws SQLException {
-            Connection conn = Kitchen.DatabaseManager.getConnection();
-            String orderNumber = txtOrderNumber.getText();
-            String query = ("DELETE FROM OrderClass WHERE orderID = ?");
-            try (PreparedStatement pst = conn.prepareStatement(query)) {
-                pst.setString(1, orderNumber);
+
+        private void deleteOrder() {
+            try (Connection conn = Kitchen.DatabaseManager.getConnection();
+                 PreparedStatement pst = conn.prepareStatement("DELETE FROM OrderClass WHERE orderNumber = ?")) {
+                pst.setString(1, txtOrderNumber.getText());
                 int result = pst.executeUpdate();
                 if (result > 0) {
                     JOptionPane.showMessageDialog(null, "Order deleted successfully!");
@@ -301,27 +279,21 @@ public class KitchenManagementApp extends JFrame {
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error deleting order.");
+                JOptionPane.showMessageDialog(null, "Error deleting order: " + ex.getMessage());
             }
         }
-        private void searchOrder() throws SQLException {
-            Connection conn = Kitchen.DatabaseManager.getConnection();
-            String orderNumber = txtId.getText();
-            String query = ("SELECT * FROM OrderClass WHERE orderID = ?");
-            try (PreparedStatement pst = conn.prepareStatement(query)) {
-                pst.setString(1, orderNumber);
+
+        private void searchOrder() {
+            try (Connection conn = Kitchen.DatabaseManager.getConnection();
+                 PreparedStatement pst = conn.prepareStatement("SELECT * FROM OrderClass WHERE orderNumber = ?")) {
+                pst.setString(1, txtId.getText());
                 ResultSet rs = pst.executeQuery();
                 tableOrders.setModel(DbUtils.resultSetToTableModel(rs));
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error searching for order.");
+                JOptionPane.showMessageDialog(null, "Error searching for order: " + ex.getMessage());
             }
-
         }
-        public static void main(String[] args) {
-            SwingUtilities.invokeLater(SaharTicketOrders.Orders::new);
-        }
-
     }
 
     public class Waste extends JPanel {
