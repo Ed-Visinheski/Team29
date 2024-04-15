@@ -32,7 +32,6 @@ public class Orders {
     private JButton inventoryManagementButton1;
     private JButton ordersAndServicesButton1;
     private JButton settingsButton;
-    private JButton signInButton1;
     private JButton signOutButton1;
     Connection conn = null;
     Statement stmt = null;
