@@ -17,11 +17,12 @@
 
     <!-- Dependencies -->
     <dependencies>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.23</version>
-        </dependency>
+            <!-- MySQL JDBC Driver -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.23</version>  <!-- Ensure you have the latest version here -->
+            </dependency>
         <!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -29,8 +30,6 @@
             <version>5.0.1</version>
         </dependency>
     </dependencies>
-
-
     <!-- Add other configurations as needed -->
 
 </project>
