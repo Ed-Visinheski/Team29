@@ -103,6 +103,10 @@ public class KitchenManagementApp extends JFrame {
             searchButton = new JButton("Search");
             updateButton = new JButton("Update");
 
+            // Attach action listeners to buttons
+            searchButton.addActionListener(this::searchStock);
+            updateButton.addActionListener(this::updateStock);
+
             buttonPanel.add(searchButton);
             buttonPanel.add(updateButton);
 
@@ -128,27 +132,53 @@ public class KitchenManagementApp extends JFrame {
         }
 
         private void searchStock(ActionEvent e) {
-            try (Connection connection = Kitchen.DatabaseManager.getConnection();
-                 PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock WHERE ingredientID = ?")) {
-                pst.setInt(1, Integer.parseInt(textIngredientID.getText()));
-                ResultSet rs = pst.executeQuery();
-                stockTable.setModel(DbUtils.resultSetToTableModel(rs));
-            } catch (SQLException ex) {
+            try {
+                int ingredientID = Integer.parseInt(textIngredientID.getText());
+                if(ingredientID < 0){
+                    try{
+                        Connection connection = Kitchen.DatabaseManager.getConnection();
+                        PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock");
+                        ResultSet rs = pst.executeQuery();
+                        stockTable.setModel(DbUtils.resultSetToTableModel(rs));
+                    }catch (SQLException ex){
+                        ex.printStackTrace();
+                    }
+                }else{
+                try (Connection connection = Kitchen.DatabaseManager.getConnection();
+                     PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock WHERE ingredientID = ?")) {
+                    pst.setInt(1, ingredientID);
+                    ResultSet rs = pst.executeQuery();
+                    stockTable.setModel(DbUtils.resultSetToTableModel(rs));
+                }
+            } }catch (NumberFormatException | SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Please enter a valid Ingredient ID.");
                 ex.printStackTrace();
             }
         }
 
         private void updateStock(ActionEvent e) {
-            try (Connection connection = Kitchen.DatabaseManager.getConnection();
-                 PreparedStatement pst = connection.prepareStatement("UPDATE Stock SET ingredientName = ?, stockLevel = ?, stockThreshold = ?, deliveryArrivalDate = ? WHERE ingredientID = ?")) {
-                pst.setString(1, textIngredientName.getText());
-                pst.setInt(2, Integer.parseInt(textStockLevel.getText()));
-                pst.setInt(3, Integer.parseInt(textStockThreshold.getText()));
-                pst.setString(4, textDeliveryArrivalDate.getText());
-                pst.setInt(5, Integer.parseInt(textIngredientID.getText()));
-                pst.executeUpdate();
-                loadStockTable();
-            } catch (SQLException ex) {
+            try {
+                int ingredientID = Integer.parseInt(textIngredientID.getText());
+                int stockLevel = Integer.parseInt(textStockLevel.getText());
+                int stockThreshold = Integer.parseInt(textStockThreshold.getText());
+                try (Connection connection = Kitchen.DatabaseManager.getConnection();
+                     PreparedStatement pst = connection.prepareStatement(
+                             "UPDATE Stock SET ingredientName = ?, stockLevel = ?, stockThreshold = ?, deliveryArrivalDate = ? WHERE ingredientID = ?")) {
+                    pst.setString(1, textIngredientName.getText());
+                    pst.setInt(2, stockLevel);
+                    pst.setInt(3, stockThreshold);
+                    pst.setString(4, textDeliveryArrivalDate.getText());
+                    pst.setInt(5, ingredientID);
+                    int result = pst.executeUpdate();
+                    if (result > 0) {
+                        JOptionPane.showMessageDialog(null, "Stock updated successfully!");
+                        loadStockTable();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No records updated. Check the input data.");
+                    }
+                }
+            } catch (NumberFormatException | SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Please ensure all fields are correctly filled.");
                 ex.printStackTrace();
             }
         }
@@ -284,14 +314,25 @@ public class KitchenManagementApp extends JFrame {
         }
 
         private void searchOrder() {
+            if(Integer.parseInt(txtId.getText()) < 0){
+                try (Connection conn = Kitchen.DatabaseManager.getConnection();
+                     PreparedStatement pst = conn.prepareStatement("SELECT * FROM OrderClass")) {
+                    ResultSet rs = pst.executeQuery();
+                    tableOrders.setModel(DbUtils.resultSetToTableModel(rs));
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error searching for order: " + ex.getMessage());
+                }
+            }else{
+                loadTableData();
             try (Connection conn = Kitchen.DatabaseManager.getConnection();
-                 PreparedStatement pst = conn.prepareStatement("SELECT * FROM OrderClass WHERE orderNumber = ?")) {
+                 PreparedStatement pst = conn.prepareStatement("SELECT * FROM OrderClass WHERE orderID = ?")) {
                 pst.setString(1, txtId.getText());
                 ResultSet rs = pst.executeQuery();
                 tableOrders.setModel(DbUtils.resultSetToTableModel(rs));
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error searching for order: " + ex.getMessage());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             }
         }
     }
@@ -1956,10 +1997,10 @@ public class KitchenManagementApp extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            KitchenManagementApp frame = new KitchenManagementApp();
-            frame.setVisible(true);
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> {
+//            KitchenManagementApp frame = new KitchenManagementApp();
+//            frame.setVisible(true);
+//        });
+//    }
 }

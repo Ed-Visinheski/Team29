@@ -1,5 +1,8 @@
 package Kitchen;
 
+import KitchenToManagement.KitchenManagementApp;
+import KitchenToManagement.KitchenToManagement;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -65,7 +68,7 @@ public class LogInUI extends JFrame implements ActionListener {
                     // Open the FileRetrievalUI
                     EventQueue.invokeLater(() -> {
                         try {
-                            DishConstructionUI frame = new DishConstructionUI(chefID);
+                            KitchenManagementApp frame = new KitchenManagementApp();
                             frame.setVisible(true);
                         } catch (Exception ex) {
                             ex.printStackTrace();
