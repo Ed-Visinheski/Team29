@@ -1,5 +1,8 @@
 package Kitchen;
 
+import KitchenToManagement.DishObject;
+import KitchenToManagement.Ingredient;
+
 import java.util.HashMap;
 import java.util.Map;
 

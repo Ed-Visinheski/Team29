@@ -1,22 +1,31 @@
 package Kitchen;
 
+import java.time.LocalDate;
+
 public class Menu extends KitchenToManagement.Menu{
     private int menuID;
     private String menuName;
     private String menuDescription;
-    private int menuPrice;
+    private LocalDate menuDate;
     private int menuPreparationTime;
 
-    public Menu(int menuID, String menuName, String menuDescription, int menuPrice, int menuPreparationTime) {
+    public Menu(int menuID, String menuName, String menuDescription, int menuPreparationTime, LocalDate menuDate) {
         this.menuID = menuID;
         this.menuName = menuName;
         this.menuDescription = menuDescription;
-        this.menuPrice = menuPrice;
         this.menuPreparationTime = menuPreparationTime;
+        this.menuDate = menuDate;
     }
 
     public void setMenuID(int menuID) {
         this.menuID = menuID;
+    }
+    public LocalDate getMenuDate() {
+        return menuDate;
+    }
+
+    public void setMenuDate(LocalDate menuDate) {
+        this.menuDate = menuDate;
     }
 
     public int getMenuID() {
@@ -37,14 +46,6 @@ public class Menu extends KitchenToManagement.Menu{
 
     public String getMenuDescription() {
         return menuDescription;
-    }
-
-    public void setMenuPrice(int menuPrice) {
-        this.menuPrice = menuPrice;
-    }
-
-    public int getMenuPrice() {
-        return menuPrice;
     }
 
     public void setMenuPreparationTime(int menuPreparationTime) {

@@ -137,7 +137,7 @@ public class DishGUI extends JFrame {
                 long dishID = generatedKeys.getLong(1); // Retrieve the first field of the generated keys, which is the dish ID
 
                 while (tableModel.getRowCount() > 0) {
-                    String ingredient = (String) tableModel.getValueAt(0, 0);
+                    String ingredient = tableModel.getValueAt(0, 0).toString();
                     int quantity = Integer.parseInt(tableModel.getValueAt(0, 1).toString());
                     String sql1 = "SELECT ingredientID FROM Ingredients WHERE ingredientName = ?";
                     PreparedStatement pstm1 = connection.prepareStatement(sql1);

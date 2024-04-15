@@ -1,12 +1,12 @@
-package Kitchen;
+package KitchenToManagement;
 
-public class Ingredient extends KitchenToManagement.Ingredient{
+public class IngredientObject extends Ingredient {
     private int ingredientID;
     private String ingredientName;
     private int ingredientStockLevel;
     private int lowStockThreshold;
 
-    public Ingredient(int ingredientID, String ingredientName, int ingredientStockLevel, int lowStockThreshold) {
+    public IngredientObject(int ingredientID, String ingredientName, int ingredientStockLevel, int lowStockThreshold) {
         this.ingredientID = ingredientID;
         this.ingredientName = ingredientName;
         this.ingredientStockLevel = ingredientStockLevel;
