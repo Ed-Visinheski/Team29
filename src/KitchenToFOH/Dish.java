@@ -4,13 +4,18 @@ package KitchenToFOH;
  * Abstract class representing a dish. Implements the IDish interface to manage dish details,
  * including a unique identifier, list of ingredients with quantities information.
  */
-public abstract class Dish implements IDish {
+public class Dish implements IDish {
     /**
      * Unique identifier for the dish.
      */
     private int dishID;
 
     private String timeRequired;
+
+    public Dish(int dishID, String timeRequired){
+        this.dishID = dishID;
+        this.timeRequired = timeRequired;
+    }
 
     /**
      * Sets the unique identifier for this dish.

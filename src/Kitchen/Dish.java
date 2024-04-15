@@ -1,67 +1,32 @@
 package Kitchen;
 
-public class Dish extends KitchenToFOH.Dish{
+public class Dish implements KitchenToFOH.IDish{
     private int dishID;
-    private String dishName;
-   // private Recipe recipe;
-    private String dishDescription;
-    private int dishPrice;
-    private int dishPreparationTime;
+    private String timeRequired;
 
-    public Dish(int dishID, String dishName, String dishDescription, int dishPrice, int dishPreparationTime) {
+    public Dish(int dishID, String timeRequired){
         this.dishID = dishID;
-        this.dishName = dishName;
-        //this.recipe = recipe;
-        this.dishDescription = dishDescription;
-        this.dishPrice = dishPrice;
-        this.dishPreparationTime = dishPreparationTime;
+        this.timeRequired = timeRequired;
     }
 
+
+    @Override
     public void setDishID(int dishID) {
-        this.dishID = dishID;
+
     }
 
+    @Override
     public int getDishID() {
-        return dishID;
+        return 0;
     }
 
-    public void setDishName(String dishName) {
-        this.dishName = dishName;
+    @Override
+    public void setTimeRequired(String time) {
+
     }
 
-    public String getDishName() {
-        return dishName;
-    }
-
-//    public void setRecipe(Recipe recipe) {
-//        this.recipe = recipe;
-//    }
-//
-//    public Recipe getRecipe() {
-//        return recipe;
-//    }
-
-    public void setDishDescription(String dishDescription) {
-        this.dishDescription = dishDescription;
-    }
-
-    public String getDishDescription() {
-        return dishDescription;
-    }
-
-    public void setDishPrice(int dishPrice) {
-        this.dishPrice = dishPrice;
-    }
-
-    public int getDishPrice() {
-        return dishPrice;
-    }
-
-    public void setDishPreparationTime(int dishPreparationTime) {
-        this.dishPreparationTime = dishPreparationTime;
-    }
-
-    public int getDishPreparationTime() {
-        return dishPreparationTime;
+    @Override
+    public String getTimeRequired() {
+        return null;
     }
 }

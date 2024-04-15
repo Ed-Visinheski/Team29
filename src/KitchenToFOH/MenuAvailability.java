@@ -8,16 +8,24 @@ import java.util.HashSet;
  * Abstract class that implements the IMenuAvailability interface to manage dish availability within a menu.
  * This class keeps track of which dishes are available and whether they are ready to be served.
  */
-public abstract class MenuAvailability implements IMenuAvailability {
+public class MenuAvailability implements IMenuAvailability {
     /**
      * Stores the availability status (true for available, false otherwise) for each dish.
      */
     private HashMap<Dish, Boolean> dishAvailability;
 
+
     /**
      * Stores the date of the menu availability.
      */
     private LocalDate date;
+
+    public MenuAvailability(LocalDate date, HashMap<Dish, Boolean> dishAvailability){
+        this.date = date;
+        this.dishAvailability = dishAvailability;
+    }
+
+
 
     /**
      * Sets the date of the menu availability.
@@ -35,6 +43,14 @@ public abstract class MenuAvailability implements IMenuAvailability {
     public LocalDate getLocalDate(){
         return date;
     }
+
+    @Override
+    public void setDishAvailability(HashMap<Dish, Boolean> dishAvailable) {
+       for(Dish dish : dishAvailable.keySet()){
+           dishAvailability.put(dish, dishAvailable.get(dish));
+       }
+    }
+
 
     /**
      * Sets the availability of dishes in the menu.

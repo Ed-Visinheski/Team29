@@ -1,5 +1,6 @@
 package KitchenToManagement;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public interface KitchenToManagement {
@@ -12,7 +13,7 @@ public interface KitchenToManagement {
      * allowing for menu planning and scheduling.
      */
 
-    public Menu getMenuOnDate(Date date);
+    public Menu getMenuOnDate(LocalDate date);
 
 
 }
