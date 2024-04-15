@@ -529,6 +529,7 @@ public class KitchenManagementApp extends JFrame {
 
 
         private int chefID;
+        private JButton recipeButton;
 
         public DishConstructionUI(int chefID) {
             this.chefID = chefID;
@@ -569,11 +570,15 @@ public class KitchenManagementApp extends JFrame {
             headerPanel.add(saveButton);
             headerPanel.add(submitButton);
             headerPanel.add(deleteButton);
+            recipeButton = new JButton("RECIPE");
+            headerPanel.add(recipeButton);
+            recipeButton.setVisible(false);  // Initially hidden
 
-            // Define button actions after they are instantiated
             defineButtonActions();
             add(headerPanel, BorderLayout.NORTH);
         }
+
+
 
         private void defineButtonActions() {
             saveButton.addActionListener(e -> {
@@ -844,24 +849,20 @@ public class KitchenManagementApp extends JFrame {
 
 
         private void updateButtonStates(JList<String> selectedList) {
-            if (selectedList == draftsList) {
-                saveButton.setEnabled(true);
-                submitButton.setEnabled(true);
-                deleteButton.setEnabled(true);
-                saveButton.setVisible(true);
-                submitButton.setVisible(true);
-                deleteButton.setVisible(true);
-                textArea.setEditable(true);
-                fileNameField.setEditable(true);
-            } else {
-                saveButton.setVisible(false);
-                submitButton.setVisible(false);
-                deleteButton.setVisible(false);
-                textArea.setEditable(false);
-                fileNameField.setEditable(false);
+            boolean isDrafts = selectedList == draftsList;
+            boolean isSubmitted = selectedList == submittedList;
+
+            saveButton.setVisible(isDrafts);
+            submitButton.setVisible(isDrafts);
+            deleteButton.setVisible(isDrafts);
+            recipeButton.setVisible(isSubmitted);
+
+            textArea.setEditable(isDrafts || isSubmitted);
+            fileNameField.setEditable(isDrafts);
+
+            if (isSubmitted) {
+                recipeButton.addActionListener(e -> moveRecipeToOfficial());
             }
-            this.revalidate();
-            this.repaint();
         }
 
         private void disableButtons() {
@@ -1077,6 +1078,28 @@ public class KitchenManagementApp extends JFrame {
                 return false;
             }
         }
+
+        private void moveRecipeToOfficial() {
+            String selectedRecipeName = submittedList.getSelectedValue();
+            Integer recipeId = recipeIdMap.get(selectedRecipeName);
+            if (recipeId != null) {
+                try (Connection connection = DatabaseManager.getConnection();
+                     PreparedStatement pstmt = connection.prepareStatement("UPDATE Recipe SET recipeStatus = 'RECIPE' WHERE recipeID = ?")) {
+                    pstmt.setInt(1, recipeId);
+                    int affectedRows = pstmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        JOptionPane.showMessageDialog(null, "Recipe moved to official recipes successfully!");
+                        recipesModel.addElement(selectedRecipeName);
+                        submittedModel.removeElement(selectedRecipeName);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to move recipe to official recipes.");
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Database error: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
 
     public class DishGUI extends JPanel {
@@ -1280,7 +1303,18 @@ public class KitchenManagementApp extends JFrame {
             table.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 1 && table.getSelectedColumn() == 2) { // Assuming recipeID is in column 2
-                        openRecipeDetails(table.getValueAt(table.getSelectedRow(), 2).toString()); // Pass recipe ID
+                        String recipeIdStr = table.getValueAt(table.getSelectedRow(), 2).toString();
+                        for(int i : recipeMap.keySet()) {
+                            if(recipeMap.get(i).equals(recipeIdStr)){
+                                recipeIdStr = Integer.toString(i);
+                                break;
+                            }
+                        }
+                        if (recipeIdStr.matches("\\d+")) { // Regex to check if the string contains only digits
+                            openRecipeDetails(recipeIdStr);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Invalid Recipe ID: " + recipeIdStr, "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                     if (e.getClickCount() == 1 && table.getSelectedColumn() == 1) { // Assuming that photo is in column 1
                         int row = table.getSelectedRow();
@@ -1448,17 +1482,29 @@ public class KitchenManagementApp extends JFrame {
 
 
         private void openRecipeDetails(String recipeId) {
-            // Get the parent Frame of this JPanel
             Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
-
-            // For demonstration, simply show recipe ID in a new dialog
             JDialog recipeDialog = new JDialog(parentFrame, "Recipe Details", true);
             recipeDialog.setSize(500, 400);
             recipeDialog.setLocationRelativeTo(this);
             JTextArea recipeTextArea = new JTextArea();
 
-            // Assume we fetch recipe details from database
-            recipeTextArea.setText("Recipe Details for ID: " + recipeId); // Placeholder for actual recipe fetching
+            try (Connection connection = Kitchen.DatabaseManager.getConnection();
+                 PreparedStatement pstm = connection.prepareStatement("SELECT recipeFile FROM Recipe WHERE recipeID = ?")) {
+                pstm.setInt(1, Integer.parseInt(recipeId));
+                try (ResultSet resultSet = pstm.executeQuery()) {
+                    if (resultSet.next()) {
+                        Blob recipeBlob = resultSet.getBlob("recipeFile");
+                        byte[] bytes = recipeBlob.getBytes(1, (int) recipeBlob.length());
+                        String content = new String(bytes, StandardCharsets.UTF_8);
+                        recipeTextArea.setText(content);
+                    } else {
+                        recipeTextArea.setText("No recipe details found for this ID.");
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                recipeTextArea.setText("Failed to load recipe details: " + ex.getMessage());
+            }
 
             JScrollPane scrollPane = new JScrollPane(recipeTextArea);
             recipeDialog.add(scrollPane);
