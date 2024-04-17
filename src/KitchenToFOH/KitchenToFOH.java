@@ -2,6 +2,10 @@ package KitchenToFOH;
 
 import java.time.LocalDate;
 
+/**
+ * The KitchenToFOH interface provides functionality for retrieving menu availability information
+ */
+
 public interface KitchenToFOH {
 
     /**

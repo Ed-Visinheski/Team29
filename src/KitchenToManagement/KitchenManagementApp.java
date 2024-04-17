@@ -27,7 +27,8 @@ import java.util.List;
 
 public class KitchenManagementApp extends JFrame {
     /**
-     * Constructor to set up the main frame and add tabbed panels for different functionalities.
+     * Constructor to set up the main frame, with tabbed panels of the other classes, containing
+     * each of their own functionalities.
      */
     public KitchenManagementApp() {
         // Set up the main frame

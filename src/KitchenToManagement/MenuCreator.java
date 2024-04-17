@@ -33,7 +33,7 @@ public class MenuCreator extends JFrame {
     private JSplitPane splitPane;
 
     /**
-     * Constructs a MenuCreator object.
+     * Creates a new instance of the MenuCreator class.
      */
     public MenuCreator() {
         // Frame setup
@@ -63,6 +63,7 @@ public class MenuCreator extends JFrame {
 
     /**
      * Sets up the view menu panel.
+     * This method will be defined to view saved menus.
      */
     private void setupViewMenuPanel() {
         // Panel setup
@@ -231,6 +232,7 @@ public class MenuCreator extends JFrame {
 
     /**
      * Sets up the create menu panel.
+     * This method will contain your existing setup code for creating menus.
      */
     private void setupCreateMenuPanel() {
         // Top panel setup
@@ -508,10 +510,11 @@ public class MenuCreator extends JFrame {
     }
 
     /**
+     * @deprecated
      * The main method to start the application.
      * @param args The command line arguments.
      */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MenuCreator().setVisible(true));
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> new MenuCreator().setVisible(true));
+//    }
 }

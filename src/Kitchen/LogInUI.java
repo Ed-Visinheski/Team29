@@ -101,7 +101,7 @@ public class LogInUI extends JFrame implements ActionListener {
      * The main method of the application.
      * It creates an instance of LogInUI and makes it visible.
      *
-     * @param args The command-line arguments.
+     * @param args Main method to run the LogInUI class
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {

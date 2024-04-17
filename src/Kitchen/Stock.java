@@ -137,6 +137,7 @@ public class Stock {
     }
 
     /**
+     * @deprecated 
      * The main method to start the Stock Management application.
      *
      * @param args The command-line arguments.

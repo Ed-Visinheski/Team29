@@ -8,16 +8,32 @@ import java.awt.event.ActionEvent;
 import java.sql.*;
 import java.util.Arrays;
 
+
+/**
+ * This class manages the order handling interface for a kitchen management system.
+ * It provides UI elements to add, update, delete, and search orders within a database.
+ */
+
 public class Orders {
     private JFrame frame;
     private JTextField txtOrderNumber, txtDishNumber, txtTableNumber, txtStatus, txtId;
     private JButton butSave, butUpdate, butDelete, butSearch;
     private JTable tableOrders;
 
+    /**
+     * Constructor that initializes the user interface and loads initial table data.
+     */
+
     public Orders() {
         initializeUI();
         loadTableData();
     }
+
+    /**
+     * Initializes the user interface for managing orders.
+     * This method sets up the JFrame with all necessary UI components including text fields,
+     * buttons, and a table to display order data.
+     */
 
     private void initializeUI() {
         frame = new JFrame("Orders Management");
@@ -76,6 +92,11 @@ public class Orders {
     }
 
 
+    /**
+     * Loads data from the OrderClass table in the database and displays it in the tableOrders JTable.
+     */
+
+
     private void loadTableData() {
         try {
             Connection conn = Kitchen.DatabaseManager.getConnection();
@@ -86,6 +107,14 @@ public class Orders {
             JOptionPane.showMessageDialog(null, "Failed to load order data: " + ex.getMessage());
         }
     }
+
+    /**
+     * @deprecated
+     * Handles the action events for the buttons in the UI.
+     *
+     * @param e The ActionEvent object representing the event source and action command.
+     * @throws SQLException If an SQL exception occurs while performing database operations.
+     */
 
     private void actionPerformed(ActionEvent e) throws SQLException {
         JButton source = (JButton) e.getSource();
@@ -99,6 +128,12 @@ public class Orders {
             searchOrder();
         }
     }
+
+    /**
+     * Saves the order details entered in the text fields to the database.
+     *
+     * @throws SQLException If an SQL exception occurs while performing database operations.
+     */
     private void saveOrder() throws SQLException {
         Connection conn = Kitchen.DatabaseManager.getConnection();
         String orderNumber = txtOrderNumber.getText();
@@ -123,6 +158,13 @@ public class Orders {
             JOptionPane.showMessageDialog(null, "Error adding order.");
         }
     }
+
+    /**
+     * Updates the order details in the database based on the order number.
+     *
+     * @throws SQLException If an SQL exception occurs while performing database operations.
+     */
+
     private void updateOrder() throws SQLException {
         Connection conn = Kitchen.DatabaseManager.getConnection();
         String orderNumber = txtOrderNumber.getText();
@@ -147,6 +189,14 @@ public class Orders {
             JOptionPane.showMessageDialog(null, "Error updating order.");
         }
     }
+
+    /**
+     * Deletes the order from the database based on the order number.
+     *
+     * @throws SQLException If an SQL exception occurs while performing database operations.
+     */
+
+
     private void deleteOrder() throws SQLException {
         Connection conn = Kitchen.DatabaseManager.getConnection();
         String orderNumber = txtOrderNumber.getText();
@@ -165,6 +215,12 @@ public class Orders {
             JOptionPane.showMessageDialog(null, "Error deleting order.");
         }
     }
+
+    /**
+     * Searches for an order in the database based on the order number.
+     * @throws SQLException
+     */
+
     private void searchOrder() throws SQLException {
         Connection conn = Kitchen.DatabaseManager.getConnection();
         String orderNumber = txtId.getText();
@@ -179,8 +235,15 @@ public class Orders {
         }
 
     }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Orders::new);
-    }
+
+    /**
+     * @deprecated
+     * Main method to run the Orders class.
+     * @param args Command-line arguments.
+     */
+
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(Orders::new);
+//    }
 
 }

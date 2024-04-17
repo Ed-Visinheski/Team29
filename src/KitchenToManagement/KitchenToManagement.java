@@ -3,6 +3,10 @@ package KitchenToManagement;
 import java.time.LocalDate;
 import java.util.Date;
 
+/**
+ * Interface for the KitchenToManagement class, which is responsible for retrieving menu information from the database.
+ */
+
 public interface KitchenToManagement {
 
     /**

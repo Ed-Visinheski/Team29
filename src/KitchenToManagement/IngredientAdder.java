@@ -160,6 +160,7 @@ public class IngredientAdder extends JFrame {
     }
 
     /**
+     * @deprecated
      * The main method that starts the application.
      * It creates an instance of IngredientAdder and sets its visibility to true.
      * @param args The command-line arguments (not used).
