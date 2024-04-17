@@ -27,8 +27,7 @@ import java.util.List;
 
 public class KitchenManagementApp extends JFrame {
     private int chefID;
-    public KitchenManagementApp(int ChefID) {
-        this.chefID = ChefID;
+    public KitchenManagementApp() {
         // Set up the main frame
         setTitle("Kitchen Management System");
         setSize(1250, 720);  // Adjust the size based on your needs
@@ -44,7 +43,7 @@ public class KitchenManagementApp extends JFrame {
         DishViewer dishViewerPanel = new DishViewer();
         IngredientAdder ingredientAdderPanel = new IngredientAdder();
         MenuCreator menuCreatorPanel = new MenuCreator();
-        DishConstructionUI dishConstructionUIPanel = new DishConstructionUI(chefID);
+        DishConstructionUI dishConstructionUIPanel = new DishConstructionUI(1);
         Waste wastePanel = new Waste();
         Orders ordersPanel = new Orders();
         Stock stockPanel = new Stock();

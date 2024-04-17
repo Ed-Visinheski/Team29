@@ -68,7 +68,7 @@ public class LogInUI extends JFrame implements ActionListener {
                     // Open the FileRetrievalUI
                     EventQueue.invokeLater(() -> {
                         try {
-                            KitchenManagementApp frame = new KitchenManagementApp(chefID);
+                            KitchenManagementApp frame = new KitchenManagementApp();
                             frame.setVisible(true);
                         } catch (Exception ex) {
                             ex.printStackTrace();
