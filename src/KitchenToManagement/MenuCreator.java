@@ -1,4 +1,5 @@
 package KitchenToManagement;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -12,7 +13,11 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
+/**
+ * The MenuCreator class represents a GUI application for creating and managing menus.
+ */
 public class MenuCreator extends JFrame {
+    // GUI components
     private JTextField menuNameField, preparationTimeField, dateField, courseNameField;
     private JButton deleteMenuButton;
     private JTextArea descriptionArea;
@@ -27,28 +32,40 @@ public class MenuCreator extends JFrame {
     private JScrollPane mainScrollPane, menuScrollPane; // Added for better control
     private JSplitPane splitPane;
 
+    /**
+     * Constructs a MenuCreator object.
+     */
     public MenuCreator() {
+        // Frame setup
         setTitle("Menu Creator");
         setSize(800, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Tabbed pane setup
         tabbedPane = new JTabbedPane();
 
+        // Create menu panel setup
         createMenuPanel = new JPanel(new BorderLayout());
         setupCreateMenuPanel();  // This method will contain your existing setup code for creating menus
 
+        // View menu panel setup
         viewMenuPanel = new JPanel(new BorderLayout());
         setupViewMenuPanel();  // This method will be defined to view saved menus
 
+        // Adding tabs to the tabbed pane
         tabbedPane.addTab("Create Menu", createMenuPanel);
         tabbedPane.addTab("View Menus", viewMenuPanel);
 
+        // Adding the tabbed pane to the frame
         add(tabbedPane, BorderLayout.CENTER);
     }
 
-
+    /**
+     * Sets up the view menu panel.
+     */
     private void setupViewMenuPanel() {
+        // Panel setup
         viewMenuPanel.setLayout(new BorderLayout());
 
         // Table setup
@@ -88,25 +105,33 @@ public class MenuCreator extends JFrame {
         loadMenusIntoTable(menuTable);
     }
 
-
+    /**
+     * Deletes the selected menu from the database and updates the UI.
+     * @param table The table containing the menus.
+     */
     private void deleteSelectedMenu(JTable table) {
+        // Get the selected row index
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a menu to delete.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // Get the menu ID from the selected row
         int menuId = (Integer) table.getValueAt(selectedRow, 0);
         int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this menu?", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
+            // Delete the menu from the database
             try (Connection conn = getDatabaseConnection();
                  PreparedStatement stmt = conn.prepareStatement("DELETE FROM Menu WHERE menuId = ?")) {
                 stmt.setInt(1, menuId);
                 int affectedRows = stmt.executeUpdate();
                 if (affectedRows > 0) {
+                    // Remove the row from the table if deletion is successful
                     ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
                     JOptionPane.showMessageDialog(this, "Menu deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    detailsPanel.removeAll();  // Clear details panel if the deleted menu was displayed
+                    // Clear details panel if the deleted menu was displayed
+                    detailsPanel.removeAll();
                     detailsPanel.revalidate();
                     detailsPanel.repaint();
                 } else {
@@ -119,11 +144,14 @@ public class MenuCreator extends JFrame {
         }
     }
 
-
-
+    /**
+     * Displays the details of the selected menu.
+     * @param menuId The ID of the selected menu.
+     */
     private void displayMenuDetails(int menuId) {
         detailsPanel.removeAll(); // Clear previous contents
 
+        // Fetch course details from the database
         try (Connection conn = getDatabaseConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT courseName FROM Course WHERE menuId = ?")) {
             stmt.setInt(1, menuId);
@@ -150,6 +178,7 @@ public class MenuCreator extends JFrame {
             JOptionPane.showMessageDialog(this, "Error loading course details: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
 
+        // Refresh the details panel
         detailsPanel.revalidate();
         detailsPanel.repaint();
         splitPane.setRightComponent(new JScrollPane(detailsPanel));  // Ensure the updated panel is visible
@@ -158,8 +187,10 @@ public class MenuCreator extends JFrame {
         splitPane.revalidate();
     }
 
-
-
+    /**
+     * Loads menus into the table.
+     * @param table The table to load menus into.
+     */
     private void loadMenusIntoTable(JTable table) {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -171,6 +202,7 @@ public class MenuCreator extends JFrame {
         model.addColumn("Menu Name");
         model.addColumn("Menu Date");
 
+        // Fetch menus from the database and populate the table
         try (Connection conn = getDatabaseConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT menuId, menuName, menuDate FROM Menu")) {
@@ -182,6 +214,7 @@ public class MenuCreator extends JFrame {
             JOptionPane.showMessageDialog(this, "Error loading menus: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
 
+        // Set the model to the table and add a mouse listener to handle double-click events
         table.setModel(model);
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -196,22 +229,34 @@ public class MenuCreator extends JFrame {
         });
     }
 
-
-
+    /**
+     * Sets up the create menu panel.
+     */
     private void setupCreateMenuPanel() {
+        // Top panel setup
         JPanel topPanel = new JPanel(new GridLayout(6, 2, 5, 5));
         addComponentsToTopPanel(topPanel);
+
+        // Courses panel setup
         coursesPanel = new JPanel();
         coursesPanel.setLayout(new BoxLayout(coursesPanel, BoxLayout.Y_AXIS));
         mainScrollPane = new JScrollPane(coursesPanel,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         mainScrollPane.setPreferredSize(new Dimension(780, 500));
+
+        // Add components to create menu panel
         createMenuPanel.add(topPanel, BorderLayout.NORTH);
         createMenuPanel.add(mainScrollPane, BorderLayout.CENTER);
+
+        // Load dishes from the database
         loadDishes();
     }
 
+    /**
+     * Adds components to the top panel of the create menu panel.
+     * @param panel The panel to add components to.
+     */
     private void addComponentsToTopPanel(JPanel panel) {
         menuNameField = new JTextField();
         descriptionArea = new JTextArea(2, 20);
@@ -230,6 +275,7 @@ public class MenuCreator extends JFrame {
         addCourseButton = new JButton("Add Course");
         addCourseButton.addActionListener(this::addCourse);
 
+        // Add components to the top panel
         panel.add(new JLabel("Menu Name:"));
         panel.add(menuNameField);
         panel.add(new JLabel("Description:"));
@@ -244,20 +290,26 @@ public class MenuCreator extends JFrame {
         panel.add(saveMenuButton);
     }
 
-
+    /**
+     * Saves the menu to the database.
+     * @param actionEvent The action event.
+     */
     private void saveMenu(ActionEvent actionEvent){
+        // Get input values
         String menuName = menuNameField.getText();
         String description = descriptionArea.getText();
         String preparationTime = preparationTimeField.getText();
         String date = dateField.getText();
 
+        // Validate input
         if (menuName.isEmpty() || description.isEmpty() || preparationTime.isEmpty() || date.isEmpty()) {
             JOptionPane.showMessageDialog(this, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // Save menu to the database
         try (Connection conn = getDatabaseConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO Menu (menuName, menuDescription, menuDate, menuStatus,preparationTime ) VALUES (?, ?, ?, ?,?)",
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO Menu (menuName, menuDescription, menuDate, menuStatus, preparationTime ) VALUES (?, ?, ?, ?, ?)",
                      Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, menuName);
             stmt.setString(2, description);
@@ -285,6 +337,10 @@ public class MenuCreator extends JFrame {
         }
     }
 
+    /**
+     * Saves the courses of the menu to the database.
+     * @param menuID The ID of the menu.
+     */
     private void saveCourses(int menuID) {
         try (Connection conn = getDatabaseConnection();
              PreparedStatement stmt = conn.prepareStatement("INSERT INTO Course (courseName, menuId) VALUES (?, ?)",
@@ -305,13 +361,11 @@ public class MenuCreator extends JFrame {
                     try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
                             int courseID = generatedKeys.getInt(1);
-                            System.out.println(courseID);
                             saveDishes(coursePanel, courseID);
                         } else {
                             JOptionPane.showMessageDialog(this, "Creating course failed, no ID obtained.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                    }
-                    catch (SQLException ex) {
+                    } catch (SQLException ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(this, "Error saving courses: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -323,6 +377,11 @@ public class MenuCreator extends JFrame {
         }
     }
 
+    /**
+     * Saves the dishes of the course to the database.
+     * @param coursePanel The panel representing the course.
+     * @param courseID The ID of the course.
+     */
     private void saveDishes(JPanel coursePanel, int courseID) {
         try (Connection conn = getDatabaseConnection();
              PreparedStatement stmt = conn.prepareStatement("INSERT INTO CourseDish (courseID, dishID) VALUES (?, ?)")) {
@@ -355,19 +414,23 @@ public class MenuCreator extends JFrame {
         }
     }
 
-
-
+    /**
+     * Sets the date for the menu.
+     * @param actionEvent The action event.
+     */
     private void setDate(ActionEvent actionEvent) {
+        // Method implementation for setting the date can be added here
     }
 
+    /**
+     * Loads dishes from the database.
+     */
     private void loadDishes() {
         try (Connection conn = getDatabaseConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT dishID, dishName FROM Dish")) {
             while (rs.next()) {
                 dishMap.put(rs.getInt("dishID"), rs.getString("dishName"));
-                System.out.println(rs.getString("dishName"));
-                System.out.println(rs.getInt("dishID"));
                 dishesModel.addElement(rs.getString("dishName"));
             }
         } catch (SQLException ex) {
@@ -376,7 +439,10 @@ public class MenuCreator extends JFrame {
         }
     }
 
-
+    /**
+     * Adds a course to the menu.
+     * @param e The action event.
+     */
     private void addCourse(ActionEvent e) {
         String courseName = courseNameField.getText().trim();
         if (courseName.isEmpty()) {
@@ -413,8 +479,11 @@ public class MenuCreator extends JFrame {
         mainScrollPane.getVerticalScrollBar().setValue(mainScrollPane.getVerticalScrollBar().getMaximum());
     }
 
-
-
+    /**
+     * Adds a dish to the course.
+     * @param coursePanel The panel representing the course.
+     * @param dishDropdown The dropdown containing dish options.
+     */
     private void addDishToCourse(JPanel coursePanel, JComboBox<String> dishDropdown) {
         String selectedDish = (String) dishDropdown.getSelectedItem();
         if (selectedDish == null) {
@@ -429,13 +498,20 @@ public class MenuCreator extends JFrame {
         coursePanel.repaint(); // Refresh the panel to show the newly added dish
     }
 
+    /**
+     * Establishes a database connection.
+     * @return The database connection.
+     * @throws SQLException If a database access error occurs.
+     */
     private Connection getDatabaseConnection() throws SQLException {
         return Kitchen.DatabaseManager.getConnection();  // Assuming Kitchen.DatabaseManager is correctly set up
     }
 
+    /**
+     * The main method to start the application.
+     * @param args The command line arguments.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new MenuCreator().setVisible(true));
     }
 }
-
-
