@@ -26,7 +26,9 @@ import java.util.*;
 import java.util.List;
 
 public class KitchenManagementApp extends JFrame {
-    public KitchenManagementApp() {
+    private int chefID;
+    public KitchenManagementApp(int ChefID) {
+        this.chefID = ChefID;
         // Set up the main frame
         setTitle("Kitchen Management System");
         setSize(1250, 720);  // Adjust the size based on your needs
@@ -42,7 +44,7 @@ public class KitchenManagementApp extends JFrame {
         DishViewer dishViewerPanel = new DishViewer();
         IngredientAdder ingredientAdderPanel = new IngredientAdder();
         MenuCreator menuCreatorPanel = new MenuCreator();
-        DishConstructionUI dishConstructionUIPanel = new DishConstructionUI(1);
+        DishConstructionUI dishConstructionUIPanel = new DishConstructionUI(chefID);
         Waste wastePanel = new Waste();
         Orders ordersPanel = new Orders();
         Stock stockPanel = new Stock();
@@ -1109,6 +1111,7 @@ public class KitchenManagementApp extends JFrame {
         private JTextField dishNameField;
         private JTextField photoPathField; // Text field to display photo file name
         private JTable ingredientsTable;
+        private JButton refreshButton;
         private DefaultTableModel tableModel;
         private JComboBox<String> recipeComboBox;
         private HashMap<Integer, String> recipeMap = new HashMap<>();
@@ -1147,10 +1150,12 @@ public class KitchenManagementApp extends JFrame {
             JButton addButton = new JButton("Add Ingredient");
             JButton removeButton = new JButton("Remove Selected");
             JButton saveButton = new JButton("Save Dish");
+            JButton refreshButton = new JButton("Refresh");
 
             buttonPanel.add(addButton);
             buttonPanel.add(removeButton);
             buttonPanel.add(saveButton);
+            buttonPanel.add(refreshButton);
 
             add(buttonPanel, BorderLayout.SOUTH);
 
@@ -1158,6 +1163,7 @@ public class KitchenManagementApp extends JFrame {
             removeButton.addActionListener(e -> removeSelectedIngredient());
             saveButton.addActionListener(e -> saveDish());
             photoButton.addActionListener(e -> uploadPhoto());
+            refreshButton.addActionListener(e -> loadRecipeBox());
 
             setLocationRelativeTo(null);
         }
@@ -1174,6 +1180,8 @@ public class KitchenManagementApp extends JFrame {
         }
 
         public void loadRecipeBox() {
+            recipeComboBox.removeAllItems();
+            recipeMap.clear();
             try{
                 Connection connection = DatabaseManager.getConnection();
                 String sql = "SELECT recipeID, recipeName FROM Recipe";
