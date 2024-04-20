@@ -11,10 +11,13 @@ import java.sql.*;
  * The Stock class manages the stock information for ingredients in the kitchen.
  */
 public class Stock {
-
     private JFrame frame; // The main frame for the application
     private JTable stockTable; // Table to display stock information
-    private JTextField textIngredientID, textIngredientName, textStockLevel, textStockThreshold, textDeliveryArrivalDate; // Text fields for input
+    private JTextField textIngredientID;
+    private JTextField textIngredientName;
+    private JTextField textStockLevel;
+    private JTextField textStockThreshold;
+    private JTextField textDeliveryArrivalDate; // Text fields for input
     private JButton searchButton, updateButton; // Buttons for searching and updating stock
 
     /**
@@ -89,7 +92,7 @@ public class Stock {
     /**
      * Loads the stock information into the table from the database.
      */
-    private void loadStockTable() {
+    void loadStockTable() {
         try (Connection connection = Kitchen.DatabaseManager.getConnection();
              PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock")) {
             ResultSet rs = pst.executeQuery();
@@ -104,7 +107,7 @@ public class Stock {
      *
      * @param e The action event associated with the search button click.
      */
-    private void searchStock(ActionEvent e) {
+    void searchStock(ActionEvent e) {
         try (Connection connection = Kitchen.DatabaseManager.getConnection();
              PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock WHERE ingredientID = ?")) {
             pst.setInt(1, Integer.parseInt(textIngredientID.getText())); // Set ingredient ID parameter
@@ -120,7 +123,7 @@ public class Stock {
      *
      * @param e The action event associated with the update button click.
      */
-    private void updateStock(ActionEvent e) {
+    void updateStock(ActionEvent e) {
         try (Connection connection = Kitchen.DatabaseManager.getConnection();
              PreparedStatement pst = connection.prepareStatement("UPDATE Stock SET ingredientName = ?, stockLevel = ?, stockThreshold = ?, deliveryArrivalDate = ? WHERE ingredientID = ?")) {
             // Set parameters for update query
@@ -144,5 +147,27 @@ public class Stock {
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Stock::new); // Start the application on the event dispatch thread
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+    public JTable getStockTable() {
+        return stockTable;
+    }
+    public JTextField getTextIngredientID() {
+        return textIngredientID;
+    }
+    public JTextField getTextIngredientName() {
+        return textIngredientName;
+    }
+    public JTextField getTextStockLevel() {
+        return textStockLevel;
+    }
+    public JTextField getTextStockThreshold() {
+        return textStockThreshold;
+    }
+    public JTextField getTextDeliveryArrivalDate() {
+        return textDeliveryArrivalDate;
     }
 }

@@ -13,13 +13,14 @@ import java.sql.*;
  * The LogInUI class represents the user interface for the login page.
  */
 public class LogInUI extends JFrame implements ActionListener {
-
     private Container container;
     private JLabel userLabel;
     private JTextField userTextField;
     private JLabel passwordLabel;
     private JPasswordField passwordField;
     private JButton loginButton;
+    private Boolean isAuthenticated = false;
+    public boolean display = true;
 
     /**
      * Constructs a new LogInUI object.
@@ -74,25 +75,28 @@ public class LogInUI extends JFrame implements ActionListener {
             // Simple login success logic, replace with real authentication
             if (!userName.trim().isEmpty() && !password.trim().isEmpty()) { // Check if username and password are not empty
                 UserAuthentication userAuthentication = new UserAuthentication(); // Create a UserAuthentication object
-                boolean isAuthenticated = userAuthentication.checkUserCredentials(userName, password); // Check user credentials
+                isAuthenticated = userAuthentication.checkUserCredentials(userName, password); // Check user credentials
                 if(isAuthenticated) { // If authentication succeeds
                     int chefID = userAuthentication.getChefID(); // Get the chef ID
                     // Dispose the current window
                     this.dispose();
-                    // Open the KitchenManagementApp window
-                    EventQueue.invokeLater(() -> {
-                        try {
-                            KitchenManagementApp frame = new KitchenManagementApp(); // Create a new KitchenManagementApp object
-                            frame.setVisible(true); // Make the window visible
-                        } catch (Exception ex) {
-                            ex.printStackTrace(); // Print stack trace if an exception occurs
-                        }
-                    });
+                    if(display) {
+                        // Open the KitchenManagementApp window
+                        EventQueue.invokeLater(() -> {
+                                    try {
+                                        KitchenManagementApp frame = new KitchenManagementApp(); // Create a new KitchenManagementApp object
+                                        frame.setVisible(true); // Make the window visible
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace(); // Print stack trace if an exception occurs
+                                    }
+                                }
+                        );
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(this, "Login Failed"); // Show login failed message
+                    if(display) JOptionPane.showMessageDialog(this, "Login Failed"); // Show login failed message
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Login Failed"); // Show login failed message
+                if(display) JOptionPane.showMessageDialog(this, "Login Failed"); // Show login failed message
             }
         }
     }
@@ -113,4 +117,20 @@ public class LogInUI extends JFrame implements ActionListener {
             }
         });
     }
+
+    public JTextField getUserTextField() {
+        return userTextField;
+    }
+
+    public JPasswordField getPasswordField() {
+        return passwordField;
+    }
+
+    public JButton getLoginButton() {
+        return loginButton;
+    }
+    public Boolean getAuthenticated() {
+        return isAuthenticated;
+    }
+
 }

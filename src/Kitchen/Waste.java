@@ -99,7 +99,7 @@ public class Waste extends JFrame {
     /**
      * Adds a new waste record to the database.
      */
-    private void addWasteRecord() {
+    public void addWasteRecord() {
         String ingredientID = textIngredientID.getText(); // Get ingredient ID from text field
         String quantity = textQuantity.getText(); // Get quantity from text field
         String reason = comboReason.getSelectedItem().toString(); // Get reason from combo box
@@ -127,7 +127,7 @@ public class Waste extends JFrame {
     /**
      * Updates an existing waste record in the database.
      */
-    private void updateWasteRecord() {
+    public void updateWasteRecord() {
         String ingredientID = textIngredientID.getText(); // Get ingredient ID from text field
         String quantity = textQuantity.getText(); // Get quantity from text field
         String reason = comboReason.getSelectedItem().toString(); // Get reason from combo box
@@ -155,7 +155,7 @@ public class Waste extends JFrame {
     /**
      * Deletes a waste record from the database.
      */
-    private void deleteWasteRecord() {
+    public void deleteWasteRecord() {
         String ingredientID = textIngredientID.getText(); // Get ingredient ID from text field
         String query = "DELETE FROM Waste WHERE ingredientID = ?"; // SQL query
         try (PreparedStatement pst = connection.prepareStatement(query)) {
@@ -184,5 +184,29 @@ public class Waste extends JFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Failed to load waste data: " + ex.getMessage());
         }
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public JTextField getTextIngredientID() {
+        return textIngredientID;
+    }
+
+    public JTextField getTextDate() {
+        return textDate;
+    }
+
+    public JTextField getTextQuantity() {
+        return textQuantity;
+    }
+
+    public JTable getWasteTable() {
+        return wasteTable;
+    }
+
+    public JComboBox<String> getComboReason() {
+        return comboReason;
     }
 }
