@@ -1,4 +1,5 @@
-package Kitchen;
+package Testing.Kitchen;
+import Kitchen.Stock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

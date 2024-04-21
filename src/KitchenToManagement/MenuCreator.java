@@ -514,7 +514,7 @@ public class MenuCreator extends JFrame {
      * The main method to start the application.
      * @param args The command line arguments.
      */
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> new MenuCreator().setVisible(true));
-//    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new MenuCreator().setVisible(true));
+    }
 }

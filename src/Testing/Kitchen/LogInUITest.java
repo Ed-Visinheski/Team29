@@ -1,5 +1,6 @@
-package Kitchen;
+package Testing.Kitchen;
 
+import Kitchen.LogInUI;
 import org.junit.Before;
 import org.junit.Test;
 

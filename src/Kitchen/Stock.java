@@ -92,7 +92,7 @@ public class Stock {
     /**
      * Loads the stock information into the table from the database.
      */
-    void loadStockTable() {
+    public void loadStockTable() {
         try (Connection connection = Kitchen.DatabaseManager.getConnection();
              PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock")) {
             ResultSet rs = pst.executeQuery();
@@ -107,7 +107,7 @@ public class Stock {
      *
      * @param e The action event associated with the search button click.
      */
-    void searchStock(ActionEvent e) {
+    public void searchStock(ActionEvent e) {
         try (Connection connection = Kitchen.DatabaseManager.getConnection();
              PreparedStatement pst = connection.prepareStatement("SELECT * FROM Stock WHERE ingredientID = ?")) {
             pst.setInt(1, Integer.parseInt(textIngredientID.getText())); // Set ingredient ID parameter
@@ -123,7 +123,7 @@ public class Stock {
      *
      * @param e The action event associated with the update button click.
      */
-    void updateStock(ActionEvent e) {
+    public void updateStock(ActionEvent e) {
         try (Connection connection = Kitchen.DatabaseManager.getConnection();
              PreparedStatement pst = connection.prepareStatement("UPDATE Stock SET ingredientName = ?, stockLevel = ?, stockThreshold = ?, deliveryArrivalDate = ? WHERE ingredientID = ?")) {
             // Set parameters for update query
